@@ -8,7 +8,7 @@ import java.util.List;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 
-public class GraphLoader {
+public class ChargerGraph {
     public static List<Graph> charger_graphes(List<String> noms_fichiers) {
         List<Graph> graphes = new ArrayList<>();
 
@@ -18,7 +18,8 @@ public class GraphLoader {
             try (BufferedReader br = new BufferedReader(new FileReader(nom_fichier))) {
                 // Lire la première ligne pour obtenir kmax
                 int kmax = Integer.parseInt(br.readLine());
-                graph.addAttribute("kmax", kmax); // Stocke kmax comme attribut du graphe
+                // Stocke kmax comme attribut du graphe
+                graph.addAttribute("kmax", kmax); 
 
                 // Lire la deuxième ligne pour obtenir le nombre de sommets
                 int numberOfVertices = Integer.parseInt(br.readLine());
