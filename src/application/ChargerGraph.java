@@ -1,12 +1,12 @@
 package Application;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
 
 public class ChargerGraph {
     public static List<Graph> charger_graphes(List<String> noms_fichiers) {
@@ -21,21 +21,26 @@ public class ChargerGraph {
                 // Stocke kmax comme attribut du graphe
                 graph.addAttribute("kmax", kmax); 
 
-                // Lire la deuxième ligne pour obtenir le nombre de sommets
-                int numberOfVertices = Integer.parseInt(br.readLine());
-
-                // Ajouter des nœuds au graph
-                for (int i = 1; i <= numberOfVertices; i++) {
-                    graph.addNode(Integer.toString(i));
-                }
-
                 // Lire les arêtes
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] tokens = line.split(" ");
                     if (tokens.length >= 2) {
+                        
+                        if(graph.getNode(tokens[0]) == null) {
+                            graph.addNode(tokens[0]);
+                        }
+                        
+                        if(graph.getNode(tokens[1]) == null) {
+                            graph.addNode(tokens[1]);
+                        }
+                        
+                        System.out.println(tokens[0]);
                         String node1 = tokens[0];
+                        System.out.println(tokens[1]);
                         String node2 = tokens[1];
+                        //condition si sommet existe si elle existe pas :
+                        //crée le sommet
                         graph.addEdge(node1 + "_" + node2, node1, node2);
                     }
                 }

@@ -1,102 +1,178 @@
 package Interface;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
 
 public class FenetreGraph extends JInternalFrame {
-    private Viewer viewer;
-    private DefaultView view;
-    private JButton toggleButton;
-    private JButton btnPrevious;
-    private JButton btnNext;
-    private JTextField txtGraphNumber; // Utilisé pour saisir le numéro du graphique
-    private boolean isFullScreen = false;
+    private final Viewer viewer;
+    private final DefaultView view;
+    private final JButton btAgrandir = new JButton("Agrandir");
+    private final JButton btRetrecir = new JButton("Retrecir");
+    private final JButton btnPrevious = new JButton("Précédent");
+    private final JButton btnNext = new JButton("Suivant");
+    private final JButton btZoomIn = new JButton("Zoom +");
+    private final JButton btZoomOut = new JButton("Zoom -");
+    private final JTextField txtGraphNumber = new JTextField(3);
+    private JFrame fullScreenFrame;
+    private final JPanel controlPanel;
+    private final JPanel fullScreenControlPanel;
 
-    public FenetreGraph(Graph graph) {
-        super("Graph Frame", false, false, false, false); // Boutons de fermeture et de réduction désactivés, redimensionnement activé
+    public FenetreGraph(Graph graph, Fenetre parentWindow) {
+        super("Graphes", false, false, false, false);
         setSize(1170, 400);
 
         viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         view = (DefaultView) viewer.addDefaultView(false);
 
-        // Utilisation d'un BorderLayout pour occuper tout l'espace disponible
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(view, BorderLayout.CENTER);
 
-        // Ajouter un bouton pour maximiser et restaurer
-        toggleButton = new JButton("Plein écran");
-        toggleButton.addActionListener(new ActionListener() {
+        btAgrandir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (isFullScreen) {
-                    restoreWindow();
-                } else {
-                    maximizeWindow();
+                maximizeWindow();
+            }
+        });
+
+        btRetrecir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                restoreWindow();
+            }
+        });
+
+        btnPrevious.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int graphNumber = parentWindow.currentGraphIndex;
+                if (graphNumber > 0) {
+                    graphNumber--; // Decrement to move to the previous graph
+                    txtGraphNumber.setText(Integer.toString(graphNumber + 1));
+                    parentWindow.afficherGraphiqueCourant(graphNumber);
                 }
             }
         });
 
-        // Ajout des boutons de navigation
-        btnPrevious = new JButton("Précédent");
-        btnNext = new JButton("Suivant");
+        btnNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int graphNumber = parentWindow.currentGraphIndex;
+                if (graphNumber < parentWindow.graphes.size() - 1) {
+                    graphNumber++; // Increment to move to the next graph
+                    txtGraphNumber.setText(Integer.toString(graphNumber + 1));
+                    parentWindow.afficherGraphiqueCourant(graphNumber);
+                }
+            }
+        });
 
-        txtGraphNumber = new JTextField(3); // Réduire la taille de la colonne à 3 pour le champ de texte
+        txtGraphNumber.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int graphNumber = getGraphNumber();
+                if (graphNumber >= 0 && graphNumber < parentWindow.graphes.size()) {
+                    txtGraphNumber.setText(Integer.toString(graphNumber + 1));
+                    parentWindow.afficherGraphiqueCourant(graphNumber);
+                } else {
+                    // Si le numéro de graphique saisi n'est pas valide, réinitialiser le champ de texte
+                    txtGraphNumber.setText(Integer.toString(parentWindow.currentGraphIndex + 1));
+                }
+            }
+        });
 
-        // Utilisation d'un BoxLayout pour mieux contrôler les espaces
-        JPanel controlPanel = new JPanel();
+        // Boutons de zoom
+        btZoomIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                zoomIn();
+            }
+        });
+
+        btZoomOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                zoomOut();
+            }
+        });
+
+        // Panneau de contrôle pour le mode fenêtré
+        controlPanel = new JPanel();
         controlPanel.setLayout(new BorderLayout());
 
-        JPanel leftPanel = new JPanel();
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.add(btnPrevious);
-        leftPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Ajouter un espace fixe
-        leftPanel.add(txtGraphNumber); // Ajouter le champ de texte
-        leftPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Ajouter un espace fixe
+        leftPanel.add(txtGraphNumber);
         leftPanel.add(btnNext);
 
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        centerPanel.add(btZoomIn);
+        centerPanel.add(btZoomOut);
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.add(btAgrandir);
+
         controlPanel.add(leftPanel, BorderLayout.WEST);
-        controlPanel.add(toggleButton, BorderLayout.EAST);
+        controlPanel.add(centerPanel, BorderLayout.CENTER);
+        controlPanel.add(rightPanel, BorderLayout.EAST);
+
+        // Panneau de contrôle pour le mode plein écran
+        fullScreenControlPanel = new JPanel();
+        fullScreenControlPanel.setLayout(new BorderLayout());
+        fullScreenControlPanel.add(btRetrecir, BorderLayout.EAST);
 
         getContentPane().add(controlPanel, BorderLayout.SOUTH);
-
         this.setResizable(true);
     }
 
     private void maximizeWindow() {
-        toggleButton.setText("Restaurer");
-        isFullScreen = true;
+        btAgrandir.setVisible(false);
+
+        fullScreenFrame = new JFrame();
+        fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        fullScreenFrame.setUndecorated(true);
+        fullScreenFrame.setLayout(new BorderLayout());
+        fullScreenFrame.add(view, BorderLayout.CENTER);
+
+        fullScreenFrame.add(fullScreenControlPanel, BorderLayout.SOUTH);
+        fullScreenFrame.setVisible(true);
+        this.setVisible(false);
     }
 
     private void restoreWindow() {
-        toggleButton.setText("Plein écran");
-        isFullScreen = false;
+        btAgrandir.setVisible(true);
+
+        fullScreenFrame.setVisible(false);
+        this.add(view, BorderLayout.CENTER);
+        this.add(controlPanel, BorderLayout.SOUTH);
+        this.setVisible(true);
+        this.revalidate();
+        this.repaint();
     }
 
-    // Ajouter des écouteurs pour les boutons de navigation
-    public void addPreviousButtonListener(ActionListener listener) {
-        btnPrevious.addActionListener(listener);
+    private void zoomIn() {
+        // Implémentation du zoom avant
+        view.getCamera().setViewPercent(view.getCamera().getViewPercent() * 0.9);
     }
 
-    public void addNextButtonListener(ActionListener listener) {
-        btnNext.addActionListener(listener);
+    private void zoomOut() {
+        // Implémentation du zoom arrière
+        view.getCamera().setViewPercent(view.getCamera().getViewPercent() / 0.9);
     }
 
-    // Méthode pour obtenir le numéro de graphique saisi par l'utilisateur
     public int getGraphNumber() {
         try {
-            return Integer.parseInt(txtGraphNumber.getText());
+            return Integer.parseInt(txtGraphNumber.getText()) - 1; // Adjust to zero-based index
         } catch (NumberFormatException e) {
-            return 1; // Si aucune valeur n'est saisie, retourne 1 par défaut
+            return 0;
         }
+    }
+
+    public void updateGraphNumber(int graphNumber) {
+        txtGraphNumber.setText(Integer.toString(graphNumber));
     }
 }
