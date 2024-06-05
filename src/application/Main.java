@@ -17,7 +17,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             Fenetre fenetre = new Fenetre();
             fenetre.setVisible(true);
-            fenetre.afficherGraphes(graphes, 1);
+            fenetre.afficherGraphes(graphes);
         });
     }
 }
