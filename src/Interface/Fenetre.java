@@ -1,7 +1,8 @@
 package Interface;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import javax.swing.*;
@@ -21,10 +22,10 @@ public class Fenetre extends JFrame {
     JButton btParcourirListeAeroport = new JButton("Parcourir");
 
     JPanel mainPanel = new JPanel(new GridBagLayout());
-    JDesktopPane graphPanel = new JDesktopPane(); // Conservez JDesktopPane
+    JDesktopPane graphPanel = new JDesktopPane();
 
-    int currentGraphIndex = 0;
-    List<Graph> graphes;
+    private int currentGraphIndex = 0;
+    private List<Graph> graphes;
 
     public Fenetre() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,10 +39,6 @@ public class Fenetre extends JFrame {
         GridBagConstraints cont = new GridBagConstraints();
         cont.insets = new Insets(5, 5, 5, 5);
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        txtInsertVol.setEditable(false);
-        
-        // Définir le texte du champ de texte txtInsertVol
-        txtInsertVol.setText(getFilenamesFromLabels());
 
         // Label Insert List
         cont.fill = GridBagConstraints.HORIZONTAL;
@@ -142,15 +139,11 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
-                    StringBuilder fileNames = new StringBuilder();
+                    StringBuilder filePaths = new StringBuilder();
                     for (File file : files) {
-                        fileNames.append(file.getName()).append(" ; ");
+                        filePaths.append(file.getAbsolutePath()).append(";");
                     }
-                    // Supprimer le dernier point-virgule et l'espace ajoutés en trop
-                    if (fileNames.length() > 0) {
-                        fileNames.delete(fileNames.length() - 3, fileNames.length());
-                    }
-                    txtInsertVol.setText(fileNames.toString());
+                    txtInsertVol.setText(filePaths.toString());
                 }
             }
         });
@@ -162,11 +155,12 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    txtInsertVol.setText(file.getName());
+                    txtInsertVol.setText(file.getAbsolutePath());
                 }
             }
         });
 
+        // Ajout d'action listeners pour les autres boutons
         btCarte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,57 +191,42 @@ public class Fenetre extends JFrame {
         });
     }
 
-
-    public void afficherGraphes(List<Graph> graphes, int graphNumber) {
+    public void afficherGraphes(List<Graph> graphes) {
         this.graphes = graphes;
-        afficherGraphiqueCourant(graphNumber);
+        afficherGraphiqueCourant();
     }
 
-
-    void afficherGraphiqueCourant(int graphNumber) {
-        if (graphNumber >= 0 && graphNumber < graphes.size()) {
-            currentGraphIndex = graphNumber;
-            graphPanel.removeAll();
-            FenetreGraph frame = new FenetreGraph(graphes.get(currentGraphIndex), this);
-            graphPanel.add(frame);
-            frame.setVisible(true);
-            try {
-                frame.setMaximum(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            graphPanel.revalidate();
-            graphPanel.repaint();
-
-            // Mettre à jour le numéro de graphique affiché dans le champ de texte
-            frame.updateGraphNumber(currentGraphIndex + 1);
+    private void afficherGraphiqueCourant() {
+        graphPanel.removeAll();
+        FenetreGraph frame = new FenetreGraph(graphes.get(currentGraphIndex));
+        graphPanel.add(frame);
+        frame.setVisible(true);
+        try {
+            frame.setMaximum(true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
-    
-    private String getFilenamesFromLabels() {
-        StringBuilder filenames = new StringBuilder();
-        Component[] components = mainPanel.getComponents();
-        for (Component component : components) {
-            if (component instanceof JLabel) {
-                JLabel label = (JLabel) component;
-                if (label.getText().startsWith("Insertion Liste Aeroport")) {
-                    // Récupérer le texte après le label
-                    String text = label.getText().substring(label.getText().indexOf(":") + 2);
-                    // Séparer les noms de fichiers par des points-virgules
-                    String[] fileNamesArray = text.split(" ; ");
-                    for (String fileName : fileNamesArray) {
-                        File file = new File(fileName.trim());
-                        // Ajouter uniquement le nom du fichier sans le chemin
-                        filenames.append(file.getName()).append(" ; ");
-                    }
+        graphPanel.revalidate();
+        graphPanel.repaint();
+
+        frame.addPreviousButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentGraphIndex > 0) {
+                    currentGraphIndex--;
+                    afficherGraphiqueCourant();
                 }
             }
-        }
-        // Supprimer le dernier point-virgule et l'espace ajoutés en trop
-        if (filenames.length() > 0) {
-            filenames.delete(filenames.length() - 3, filenames.length());
-        }
-        return filenames.toString();
+        });
+
+        frame.addNextButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentGraphIndex < graphes.size() - 1) {
+                    currentGraphIndex++;
+                    afficherGraphiqueCourant();
+                }
+            }
+        });
     }
 }
-
