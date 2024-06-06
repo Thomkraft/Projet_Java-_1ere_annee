@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         List<String> nomsFichiers = List.of(
                 "C:\\Users\\totom\\OneDrive\\Cours\\S2\\projet_crash\\Data Test\\colision-vol2.txt",
-                "C:\\Users\\totom\\OneDrive\\Cours\\S2\\projet_crash\\Data Test\\graph-test0.txt"
+                "C:\\Users\\totom\\OneDrive\\Cours\\S2\\projet_crash\\Data Test\\graph-test4.txt"
         );
 
         List<Graph> graphes = ChargerGraph.charger_graphes(nomsFichiers);
