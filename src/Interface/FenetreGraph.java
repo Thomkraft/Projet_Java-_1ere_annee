@@ -150,18 +150,19 @@ public class FenetreGraph extends JInternalFrame {
 
         JPanel leftPanel = new JPanel();
         leftPanel.add(btnPrevious);
-        leftPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         leftPanel.add(txtGraphNumber);
-        leftPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         leftPanel.add(btnNext);
         
         JPanel CenterPanel = new JPanel();
         CenterPanel.add(btnMoins);
         CenterPanel.add(btnPlus);
 
+        JPanel rightPanel = new JPanel();
+        rightPanel.add(btEcran);
+
         controlPanel.add(leftPanel, BorderLayout.WEST);
         controlPanel.add(CenterPanel, BorderLayout.CENTER);
-        controlPanel.add(btEcran, BorderLayout.EAST);
+        controlPanel.add(rightPanel, BorderLayout.EAST);
 
         container.add(controlPanel, BorderLayout.SOUTH);
     }
