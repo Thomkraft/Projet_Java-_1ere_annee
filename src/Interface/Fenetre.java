@@ -10,16 +10,19 @@ import javax.swing.border.EmptyBorder;
 import org.graphstream.graph.Graph;
 
 public class Fenetre extends JFrame {
-    JLabel lbInsertVol = new JLabel("Insérez une liste :");
-    JTextField txtInsertVol = new JTextField("Chemin du/des fichiers...");
+    JLabel lbImportGraph = new JLabel("Importer un graph:");
+    JButton btnImportGraph = new JButton("Importer");
+    JLabel lbInsertVol = new JLabel("Insérez une liste de vol :");
+    JLabel lbInsertionListeAeroport = new JLabel("Inserez une liste d'aéroport :");
+    JTextField txtInsertVol = new JTextField("");
     JLabel lbKmax = new JLabel("Valeur de Kmax :");
-    JTextField txtKmax = new JTextField("Entrez un entier...");
+    JTextField txtKmax = new JTextField("");
     JTextArea txtConsole = new JTextArea();
-    JButton btParcourir = new JButton("Parcourir");
+    JButton btParcourirVols = new JButton("Parcourir");
     JButton btTraiter = new JButton("Traiter");
     JButton btExporter = new JButton("Exporter");
     JButton btCarte = new JButton("Afficher la carte");
-    JButton btParcourirListeAeroport = new JButton("Parcourir");
+    JButton btParcourirAeroports = new JButton("Parcourir");
 
     JPanel mainPanel = new JPanel(new GridBagLayout());
     JDesktopPane graphPanel = new JDesktopPane();
@@ -28,6 +31,13 @@ public class Fenetre extends JFrame {
     private List<Graph> graphes;
 
     public Fenetre() {
+        //Style fenetre
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initialisationVue();
         ajouterActionListeners();
@@ -40,54 +50,69 @@ public class Fenetre extends JFrame {
         cont.insets = new Insets(5, 5, 5, 5);
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Label Insert List
+        // Label Insert List vol
         cont.fill = GridBagConstraints.HORIZONTAL;
         cont.gridx = 0;
         cont.gridy = 0;
-        cont.gridwidth = 2;
+        cont.gridwidth = 1;
         mainPanel.add(lbInsertVol, cont);
 
+        // Text Insert List vol
+        txtInsertVol.setEditable(false);
+        cont.gridx = 0;
+        cont.gridy = 1;
+        cont.gridwidth = 1;
+        cont.weightx = 1;
+        mainPanel.add(txtInsertVol, cont);
+
+        // Bouton Parcourir vol
+        cont.gridx = 1;
+        cont.gridy = 1;
+        cont.weightx = 0;
+        mainPanel.add(btParcourirVols, cont);
+
+        // Label Insertion Liste Aeroport
+        cont.gridx = 3;
+        cont.gridy = 0;
+        cont.gridwidth = 1;
+        cont.weightx = 1;
+        mainPanel.add(lbInsertionListeAeroport, cont);
+
+        // Bouton Parcourir aéroports
+        cont.gridx = 3;
+        cont.gridy = 1;
+        cont.gridwidth = 1;
+        cont.weightx = 1;
+        cont.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(btParcourirAeroports, cont);
+        
+        // Label Importer un graph
+        cont.gridx = 4;
+        cont.gridy = 0;
+        cont.gridwidth = 1;
+        mainPanel.add(lbImportGraph, cont);
+
+        // Bouton Importer un graph
+        cont.gridx = 4;
+        cont.gridy = 1;
+        cont.gridwidth = 1;
+        mainPanel.add(btnImportGraph, cont);
+        
         // Label Kmax
         cont.gridx = 5;
         cont.gridy = 0;
         cont.gridwidth = 1;
         mainPanel.add(lbKmax, cont);
-
-        // Text Insert List
-        cont.gridx = 0;
-        cont.gridy = 1;
-        cont.gridwidth = 3;
-        mainPanel.add(txtInsertVol, cont);
-
-        // Bouton Parcourir
-        cont.gridx = 3;
-        cont.gridy = 1;
-        cont.gridwidth = 1;
-        mainPanel.add(btParcourir, cont);
-
-        // Text Kmax
+        
+         // Text Kmax
         cont.gridx = 5;
         cont.gridy = 1;
         cont.gridwidth = 1;
         mainPanel.add(txtKmax, cont);
 
-        // Label Insertion Liste Aeroport
-        JLabel lbInsertionListeAeroport = new JLabel("Insertion Liste Aeroport :");
-        cont.gridx = 4;
-        cont.gridy = 0;
-        cont.gridwidth = 1;
-        mainPanel.add(lbInsertionListeAeroport, cont);
-
-        // Deuxième bouton Parcourir pour la sélection d'une liste d'aéroports
-        cont.gridx = 4;
-        cont.gridy = 1;
-        cont.gridwidth = 1;
-        cont.fill = GridBagConstraints.HORIZONTAL;
-        mainPanel.add(btParcourirListeAeroport, cont);
-
         // Graph Panel
         cont.gridx = 0;
-        cont.gridy = 2;
+        cont.gridy = 3;
         cont.gridwidth = 6;
         cont.weightx = 1;
         cont.weighty = 1;
@@ -131,7 +156,7 @@ public class Fenetre extends JFrame {
     }
 
     private void ajouterActionListeners() {
-        btParcourir.addActionListener(new ActionListener() {
+        btParcourirVols.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -148,7 +173,7 @@ public class Fenetre extends JFrame {
             }
         });
 
-        btParcourirListeAeroport.addActionListener(new ActionListener() {
+        btParcourirAeroports.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -159,7 +184,24 @@ public class Fenetre extends JFrame {
                 }
             }
         });
-
+        
+        btnImportGraph.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setMultiSelectionEnabled(true);
+                int option = fileChooser.showOpenDialog(Fenetre.this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File[] files = fileChooser.getSelectedFiles();
+                    StringBuilder filePaths = new StringBuilder();
+                    for (File file : files) {
+                        filePaths.append(file.getAbsolutePath()).append(";");
+                    }
+                    txtInsertVol.setText(filePaths.toString());
+                }
+            }
+        });
+        
         // Ajout d'action listeners pour les autres boutons
         btCarte.addActionListener(new ActionListener() {
             @Override
@@ -189,6 +231,8 @@ public class Fenetre extends JFrame {
                 }
             }
         });
+        
+        
     }
 
     public void afficherGraphes(List<Graph> graphes) {
@@ -196,37 +240,98 @@ public class Fenetre extends JFrame {
         afficherGraphiqueCourant();
     }
 
-    private void afficherGraphiqueCourant() {
+    void afficherGraphiqueCourant() {
+        // Supprimer tous les composants graphiques actuellement présents dans graphPanel
         graphPanel.removeAll();
-        FenetreGraph frame = new FenetreGraph(graphes.get(currentGraphIndex));
-        graphPanel.add(frame);
-        frame.setVisible(true);
+
+        // Créer une instance de FenetreGraph avec le graph courant
+        FenetreGraph fenetreGraph = new FenetreGraph(graphes.get(currentGraphIndex), this); // Pass Fenetre object
+        fenetreGraph.setGraphIndex(currentGraphIndex + 1); // Set the current graph index
+
+        // Ajouter FenetreGraph à graphPanel
+        graphPanel.add(fenetreGraph);
+
+        // Rendre FenetreGraph visible
+        fenetreGraph.setVisible(true);
+
         try {
-            frame.setMaximum(true);
+            // Essayer de définir la taille maximale de FenetreGraph
+            fenetreGraph.setMaximum(true);
         } catch (Exception e) {
+            // Gérer toute exception qui pourrait survenir lors de la définition de la taille maximale
             e.printStackTrace();
         }
+
+        // Valider et rafraîchir graphPanel pour refléter les changements
         graphPanel.revalidate();
         graphPanel.repaint();
+        
+        // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
+        fenetreGraph.addIndiceTxtListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Récupérer le texte saisi dans le JTextField
+                int inputText = fenetreGraph.getGraphNumber();
+                try {
+                    int newIndex = inputText - 1; // Soustraire 1 car les indices commencent à 0
+                    
+                    // Vérifier si l'indice est valide
+                    if (newIndex >= 0 && newIndex < graphes.size()) {
+                        currentGraphIndex = newIndex;
+                        // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
+                        if (fenetreGraph.isFullScreen()) {
+                            fenetreGraph.restoreWindow();
+                        }
+                        // Afficher le graphique correspondant
+                        afficherGraphiqueCourant();
+                    } else {
+                        // Afficher un message d'erreur si l'indice est invalide
+                        JOptionPane.showMessageDialog(null, "Indice de graph invalide.");
+                    }
+                } catch (NumberFormatException ex) {
+                    // Afficher un message d'erreur si la conversion échoue
+                    JOptionPane.showMessageDialog(null, "Veuillez entrer un nombre valide.");
+                }
+            }
+        });
 
-        frame.addPreviousButtonListener(new ActionListener() {
+        // Ajouter un ActionListener pour le bouton Précédent de FenetreGraph
+        fenetreGraph.addPrecButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentGraphIndex > 0) {
+                    // Décrémenter l'index du graphique courant
                     currentGraphIndex--;
+
+                    // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
+                    if (fenetreGraph.isFullScreen()) {
+                        fenetreGraph.restoreWindow();
+                    }
+
+                    // Afficher le graphique courant
                     afficherGraphiqueCourant();
                 }
             }
         });
 
-        frame.addNextButtonListener(new ActionListener() {
+        // Ajouter un ActionListener pour le bouton Suivant de FenetreGraph
+        fenetreGraph.addNextButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentGraphIndex < graphes.size() - 1) {
+                    // Incrémenter l'index du graphique courant
                     currentGraphIndex++;
+
+                    // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
+                    if (fenetreGraph.isFullScreen()) {
+                        fenetreGraph.restoreWindow();
+                    }
+
+                    // Afficher le graphique courant
                     afficherGraphiqueCourant();
                 }
             }
         });
     }
 }
+
