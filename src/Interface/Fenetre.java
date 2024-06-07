@@ -1,9 +1,11 @@
 package Interface;
 
+import Application.ChargerGraph;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,6 +66,10 @@ public class Fenetre extends JFrame {
         cont.gridwidth = 1;
         cont.weightx = 1;
         mainPanel.add(txtInsertVol, cont);
+        
+        // Fixer la taille préférée du champ de texte de la liste de vols
+        Dimension txtInsertVolPreferredSize = new Dimension(200, 20);
+        txtInsertVol.setPreferredSize(txtInsertVolPreferredSize);
 
         // Bouton Parcourir vol
         cont.gridx = 1;
@@ -121,6 +127,8 @@ public class Fenetre extends JFrame {
 
         // Console
         JScrollPane consoleScrollPane = new JScrollPane(txtConsole);
+        consoleScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Politique de défilement horizontal
+        consoleScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // Politique de défilement vertical
         cont.gridx = 0;
         cont.gridy = 4;
         cont.gridwidth = 6;
@@ -128,6 +136,10 @@ public class Fenetre extends JFrame {
         cont.weighty = 0.1;
         cont.fill = GridBagConstraints.BOTH;
         mainPanel.add(consoleScrollPane, cont);
+        
+        // Fixer la taille préférée de la console
+        Dimension consolePreferredSize = new Dimension(0, 120); // Taille souhaitée (largeur automatique, hauteur 150 pixels)
+        consoleScrollPane.setPreferredSize(consolePreferredSize);
 
         // Bouton Afficher Carte
         cont.gridx = 0;
@@ -180,7 +192,6 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    txtInsertVol.setText(file.getAbsolutePath());
                 }
             }
         });
@@ -193,14 +204,18 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
-                    StringBuilder filePaths = new StringBuilder();
+                    List<String> filePaths = new ArrayList<>();
                     for (File file : files) {
-                        filePaths.append(file.getAbsolutePath()).append(";");
+                        filePaths.add(file.getAbsolutePath());
                     }
-                    txtInsertVol.setText(filePaths.toString());
+                    // Appeler la méthode pour charger les graphes
+                    List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
+                    // Afficher les graphes dans la fenêtre
+                    afficherGraphes(graphes);
                 }
             }
         });
+
         
         // Ajout d'action listeners pour les autres boutons
         btCarte.addActionListener(new ActionListener() {
