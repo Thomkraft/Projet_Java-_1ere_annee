@@ -1,12 +1,23 @@
 package Interface;
 
-import application.ChargerGraph;
+import Application.ChargerGraph;
+import File.OpenCsv;
+import File.OpenTxt;
+import File.WriteInTxt;
+import Stockage.Aeroports;
+import Stockage.Colisions;
+import Stockage.Result;
+import Stockage.Vols;
+import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -33,6 +44,10 @@ public class Fenetre extends JFrame {
 
     private int currentGraphIndex = 0;
     private List<Graph> graphes;
+
+    private String file2 = null;
+    private StringBuilder fileVolPaths = new StringBuilder();
+
 
     public Fenetre() {
         //Style fenetre
@@ -183,12 +198,23 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
-                    StringBuilder filePaths = new StringBuilder();
+                    fileVolPaths = new StringBuilder();
+                    StringBuilder fileName = new StringBuilder();
                     for (File file : files) {
-                        filePaths.append(file.getAbsolutePath()).append(";");
+                        fileVolPaths.append(file.getAbsolutePath()).append(";");
+
+                        String[] separation = file.getAbsolutePath().split("\\\\");
+                        fileName.append(separation[separation.length-1]).append(";");
+
+
                     }
-                    txtInsertVol.setText(filePaths.toString());
+                    txtInsertVol.setText(fileName.toString());
+
+                    System.out.println(fileVolPaths);
+
                 }
+
+
             }
         });
 
@@ -199,6 +225,15 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
+                    //txtInsertVol.setText(file.getAbsolutePath());
+
+                    file2 = file.getAbsolutePath();
+
+                    String[] separation = file.getAbsolutePath().split("\\\\");
+
+                    lbInsertionListeAeroport.setText("liste chargé : " + separation[separation.length-1]);
+
+
                 }
             }
         });
@@ -209,42 +244,155 @@ public class Fenetre extends JFrame {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
+                StringBuilder nameChargedFIle = new StringBuilder();
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
-                    List<String> filePaths = new ArrayList<>();
+                    StringBuilder filePaths = new StringBuilder();
                     for (File file : files) {
-                        filePaths.add(file.getAbsolutePath());
+                        filePaths.append(file.getAbsolutePath()).append(";");
+
+                        String[] separation = file.getAbsolutePath().split("\\\\");
+                        nameChargedFIle.append(separation[separation.length-1]).append(";");
                     }
-                    // Appeler la méthode pour charger les graphes
-                    List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
-                    // Afficher les graphes dans la fenêtre
-                    afficherGraphes(graphes);
+                    //lbImportGraph.setText("Liste de graph chargé : "+ nameChargedFIle.toString());
+
+
                 }
             }
         });
 
         
-        // Ajout d'action listeners pour les autres boutons
+        // Ajouter un ActionListener pour le bouton Afficher Carte dans Fenetre
         btCarte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Afficher la carte
-                // Cette fonctionnalité reste à implémenter
+                SwingUtilities.invokeLater(() -> {
+                    String filePath = "C:\\Users\\thoma\\Documents\\Data_Test_txt/aeroports.txt";
+                    Carte carte = new Carte(filePath);
+                    carte.setVisible(true);
+                    carte.afficherCarteAvecVolPredefini();
+                });
             }
         });
+
+
 
         btTraiter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Traiter les fichiers et utiliser kmax si spécifié
-                // Cette fonctionnalité reste à implémenter
-            }
+
+
+                String file;
+                //String file2 = "C:\\Users\\thoma\\Documents\\IUT\\1ère_année\\2-semestre\\2-Sae_crash\\Data_Test_txt/aeroports.txt";
+
+
+                OpenCsv openCsv = new OpenCsv();
+                OpenTxt openTxt = new OpenTxt();
+                Colisions colision = new Colisions();
+                WriteInTxt txtWriter = new WriteInTxt();
+
+                List<Vols> listeVol = null;
+                List<String> listeColisionVol = new ArrayList<>();
+                List<Aeroports> listeAeroport = null;
+
+                try {
+                    listeAeroport = openTxt.LectureTxtAéroports(file2);
+                    if(listeAeroport == null) {
+                        throw new Exception();
+                    }
+
+                } catch (IOException ex) {
+                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CsvValidationException ex) {
+                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    System.err.println("Mauvais format pour le fichier d'aéroport !");
+                    return;
+                }
+                try {
+                    if (Integer.parseInt(txtKmax.getText()) <= 0){
+                        txtWriter.setkMax(0);
+                    }else {
+                        txtWriter.setkMax(Integer.parseInt(txtKmax.getText()));
+                    }
+                }catch (NumberFormatException ex) {
+                    txtWriter.setkMax(0);
+                }
+
+                String[] separationVolPath = fileVolPaths.toString().split(";");
+                String[] resultFileName;
+                //Boucle pour comparer chaque vols a tous les vols
+                //tous les fichiers
+                for(int k = 0; k <= separationVolPath.length-1; k++){
+                    file = separationVolPath[k];
+                    resultFileName = file.split("-");
+                    String fileName = resultFileName[resultFileName.length-1];
+
+                    try {
+                        listeVol = openCsv.LectureCsvVols(file);
+                        if (listeVol == null){
+                            throw new Exception();
+                        }
+
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CsvValidationException ex) {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        String[] separation = file.split("\\\\");
+                        txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                        continue;
+                    }
+
+                    for(int i = 0; i < listeVol.size() ;  i++){
+                        for(int j = i + 1 ; j < listeVol.size() ; j++){
+
+                            //recupere si colision ou pas et si colision recupere aussi les coordonnée de la colision
+                            Result resultat = colision.getCoordColision(listeVol.get(i), listeVol.get(j), listeAeroport);
+
+                            //si colision alors ajout du vol dans la liste des vols en colision
+                            if(resultat.isInColision()){
+                                listeColisionVol.add(listeVol.get(i).getNomVol()+ " " + listeVol.get(j).getNomVol());
+                            }
+                        }
+                    }
+
+                    try {
+                        txtWriter.writeInFile("ColisionVol-" + fileName, (ArrayList<String>) listeColisionVol, Vols.nbVols, txtWriter.getkMax());
+                    } catch (IOException ex) {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("Fichier : " + file);
+                    System.out.println("Nombre de colisions : " + colision.nbColisions);
+                    System.out.println("nombre de vols : " + Vols.nbVols);
+                    listeColisionVol.clear();
+                    listeVol.clear();
+                    colision.setNbColisions(0);
+                    Vols.setNbVols(0);
+                }
+
+                System.out.println("------------------");
+                ArrayList<String> listPathFileUpdated = new ArrayList<>();
+                int m = 1;
+                listPathFileUpdated = (ArrayList<String>) txtWriter.getListLastFileUpdated();
+
+                for(String path: listPathFileUpdated){
+                    System.out.println("Fichier "+ m + " : " + path);
+                    m++;
+                }
+
+        }
         });
 
         btExporter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                //fileChooser.setCurrentDirectory("..//");
                 int option = fileChooser.showSaveDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
@@ -291,7 +439,7 @@ public class Fenetre extends JFrame {
 
         new InfosConsole(graphes.get(currentGraphIndex));
 
-        
+
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
             @Override
