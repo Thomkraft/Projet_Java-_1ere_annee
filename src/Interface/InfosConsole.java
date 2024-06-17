@@ -1,8 +1,6 @@
 package Interface;
 
 import org.graphstream.graph.Graph;
-import org.w3c.dom.Attr;
-import scala.sys.process.ProcessBuilderImpl;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -28,10 +26,10 @@ public class InfosConsole {
 
         try {
             // Ajout de remarques s'il y en a
-            String depassKmax;
-            if (g.getAttribute("nouvKmax") != null) {
-                depassKmax = "REMARQUE : Dépassement du kmax initial -- Nouveau kmax : " + g.getAttribute("nouvKmax");
-                docConsole.insertString(0, depassKmax + "\n", attributsConsole);
+            String nbConflits;
+            if ((int) g.getAttribute("nbConflits") > 0) {
+                nbConflits = "REMARQUE : Présence de " + g.getAttribute("nbConflits") + " conflits !";
+                docConsole.insertString(0, nbConflits + "\n", attributsConsole);
             }
 
             // Ajout du temps d'execution de la coloration du graphe

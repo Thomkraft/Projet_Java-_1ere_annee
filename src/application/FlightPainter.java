@@ -1,4 +1,4 @@
-package Application;
+package application;
 
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.painter.Painter;

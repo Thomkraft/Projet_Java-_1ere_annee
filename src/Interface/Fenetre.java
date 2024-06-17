@@ -1,6 +1,5 @@
 package Interface;
 
-import Application.ChargerGraph;
 import File.OpenCsv;
 import File.OpenTxt;
 import File.WriteInTxt;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import application.ChargerGraph;
 import org.graphstream.graph.Graph;
 
 public class Fenetre extends JFrame {
@@ -415,7 +413,7 @@ public class Fenetre extends JFrame {
         graphPanel.removeAll();
 
         // Créer une instance de FenetreGraph avec le graph courant
-        FenetreGraph fenetreGraph = new FenetreGraph(graphes.get(currentGraphIndex), this); // Pass Fenetre object
+        FenetreGraphe fenetreGraph = new FenetreGraphe(graphes.get(currentGraphIndex), this); // Pass Fenetre object
         fenetreGraph.setGraphIndex(currentGraphIndex + 1); // Set the current graph index
 
         // Ajouter FenetreGraph à graphPanel

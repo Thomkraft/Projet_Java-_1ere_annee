@@ -1,10 +1,10 @@
 package coloration;
 
-import TEST.Debug;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class ColoDSatur {
@@ -33,6 +33,8 @@ public class ColoDSatur {
         listeSommets.getFirst().setAttribute("couleur", 0);
         ajoutSommetColorie(listeSommets.getFirst());
 
+        graphe.addAttribute("nbConflits", 0);
+
         // Initialisation de couleurs fictives selon l'algorithme de DSatur
         while (!(estGrapheColorie())) {
             // Attribution du DSAT de chaque sommet selon les deux règles suivantes :
@@ -57,14 +59,22 @@ public class ColoDSatur {
             // Assignation de la plus petite couleur possible au sommet choisi
             int couleurSommet;
             int couleurTeste = 0;
+            int kmax = graphe.getAttribute("kmax");
 
             do {
                 couleurSommet = choixSommet.getAttribute("couleur");
 
-                if (!(couleursUtilisees.contains(couleurTeste))) {
+                if (!(couleursUtilisees.contains(couleurTeste)) && couleurTeste < kmax) {
                     choixSommet.setAttribute("couleur", couleurTeste);
                 }
+
                 couleurTeste += 1;
+
+                // Assignation de la couleur adjacente au sommet choisi la moins presente si depassement de kmax
+                if (couleurTeste - 1 > kmax) {
+                    choixSommet.setAttribute("couleur", couleurDepassementKmax(choixSommet, kmax));
+                }
+
             } while (couleurSommet == -1);
 
 
@@ -75,12 +85,6 @@ public class ColoDSatur {
         // Fin du chronometre pour la coloration du graphe
         long finChrono = System.currentTimeMillis();
         graphe.addAttribute("finChrono", finChrono);
-
-
-        // #DEBUG : Affichage des noeuds et de leur couleur
-        Debug debug = new Debug();
-        debug.afficherCouleursSommets(graphe);
-
 
         // Application visuel des couleurs au graphe
         new AppCouleurs(graphe);
@@ -146,5 +150,39 @@ public class ColoDSatur {
                 sommetSupprime = true;
             }
         }
+    }
+
+    private int couleurDepassementKmax(Node sommetChoisi, int kmax) {
+        // Initialisation d'une ArrayList du nombre de couleurs pour chaque couleurs adjacentes
+        int[] couleursAdjacentes = new int[kmax];
+        Arrays.fill(couleursAdjacentes, 0);
+
+        Iterator<Node> itVoisinsSommet = sommetChoisi.getNeighborNodeIterator();
+        int couleurVoisinTeste;
+
+        while (itVoisinsSommet.hasNext()) {
+            couleurVoisinTeste = itVoisinsSommet.next().getAttribute("couleur");
+
+            if (couleurVoisinTeste >= 0) {
+                int valIndexCouleur = couleursAdjacentes[couleurVoisinTeste];
+                couleursAdjacentes[couleurVoisinTeste] = valIndexCouleur + 1;
+            }
+        }
+
+        // Choix de la couleur ayant le moins d'occurence
+        int indexCouleur = 0;
+        int couleurMin = 0;
+        for (int couleur : couleursAdjacentes) {
+            if (couleur < couleursAdjacentes[indexCouleur]) {
+                couleurMin = indexCouleur;
+            }
+            indexCouleur += 1;
+        }
+
+        // Incrémentation du compteur du nombre de conflit
+        int nbConflits = graphe.getAttribute("nbConflits");
+        graphe.setAttribute("nbConflits", nbConflits + 1);
+
+        return couleurMin;
     }
 }

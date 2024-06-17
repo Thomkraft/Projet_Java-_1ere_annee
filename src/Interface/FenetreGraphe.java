@@ -10,7 +10,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
 
-public class FenetreGraph extends JInternalFrame {
+public class FenetreGraphe extends JInternalFrame {
     private Viewer viewer;
     private DefaultView view;
     private JButton btnMoins = new JButton("-");
@@ -23,7 +23,7 @@ public class FenetreGraph extends JInternalFrame {
     private JFrame fullScreenFrame;
     private Fenetre fenetre;
 
-    public FenetreGraph(Graph graph, Fenetre fenetre) {
+    public FenetreGraphe(Graph graph, Fenetre fenetre) {
         super("Graphes", false, false, false, false);
         this.fenetre = fenetre; // Assign the passed Fenetre object to the local fenetre variable
         setSize(1170, 400);

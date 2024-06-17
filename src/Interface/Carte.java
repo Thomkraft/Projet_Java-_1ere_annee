@@ -1,6 +1,6 @@
 package Interface;
 
-import Application.FlightPainter;
+import application.FlightPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.viewer.DefaultTileFactory;
