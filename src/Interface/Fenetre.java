@@ -7,6 +7,8 @@ import Stockage.Aeroports;
 import Stockage.Colisions;
 import Stockage.Result;
 import Stockage.Vols;
+import application.ChargerGraph;
+import coloration.ColoDSatur;
 import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -245,16 +247,20 @@ public class Fenetre extends JFrame {
                 StringBuilder nameChargedFIle = new StringBuilder();
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
-                    StringBuilder filePaths = new StringBuilder();
+                    ArrayList<String> filePaths = new ArrayList<>();
+
                     for (File file : files) {
-                        filePaths.append(file.getAbsolutePath()).append(";");
+                        filePaths.add(file.getAbsolutePath());
 
                         String[] separation = file.getAbsolutePath().split("\\\\");
                         nameChargedFIle.append(separation[separation.length-1]).append(";");
                     }
+
+                    // Coloration du ou des graphes
+                    List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
+                    Fenetre.this.afficherGraphes(graphes);
+
                     //lbImportGraph.setText("Liste de graph chargé : "+ nameChargedFIle.toString());
-
-
                 }
             }
         });
