@@ -72,6 +72,10 @@ public class ColoDSatur {
             ajoutSommetColorie(choixSommet);
         }
 
+        // Fin du chronometre pour la coloration du graphe
+        long finChrono = System.currentTimeMillis();
+        graphe.addAttribute("finChrono", finChrono);
+
 
         // #DEBUG : Affichage des noeuds et de leur couleur
         Debug debug = new Debug();

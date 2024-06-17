@@ -1,6 +1,6 @@
 package Interface;
 
-import Application.ChargerGraph;
+import application.ChargerGraph;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import application.ChargerGraph;
 import org.graphstream.graph.Graph;
 
 public class Fenetre extends JFrame {
@@ -19,7 +21,7 @@ public class Fenetre extends JFrame {
     JTextField txtInsertVol = new JTextField("");
     JLabel lbKmax = new JLabel("Valeur de Kmax :");
     JTextField txtKmax = new JTextField("");
-    JTextArea txtConsole = new JTextArea();
+    static JTextPane txtConsole = new JTextPane();
     JButton btParcourirVols = new JButton("Parcourir");
     JButton btTraiter = new JButton("Traiter");
     JButton btExporter = new JButton("Exporter");
@@ -129,6 +131,11 @@ public class Fenetre extends JFrame {
         JScrollPane consoleScrollPane = new JScrollPane(txtConsole);
         consoleScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Politique de défilement horizontal
         consoleScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // Politique de défilement vertical
+
+        txtConsole.setBorder(BorderFactory.createEmptyBorder(7, 10, 7, 10));
+        txtConsole.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtConsole.setEditable(false);
+
         cont.gridx = 0;
         cont.gridy = 4;
         cont.gridwidth = 6;
@@ -138,7 +145,7 @@ public class Fenetre extends JFrame {
         mainPanel.add(consoleScrollPane, cont);
         
         // Fixer la taille préférée de la console
-        Dimension consolePreferredSize = new Dimension(0, 120); // Taille souhaitée (largeur automatique, hauteur 150 pixels)
+        Dimension consolePreferredSize = new Dimension(0, 100); // Taille souhaitée (largeur automatique, hauteur 150 pixels)
         consoleScrollPane.setPreferredSize(consolePreferredSize);
 
         // Bouton Afficher Carte
@@ -280,6 +287,10 @@ public class Fenetre extends JFrame {
         // Valider et rafraîchir graphPanel pour refléter les changements
         graphPanel.revalidate();
         graphPanel.repaint();
+
+
+        new InfosConsole(graphes.get(currentGraphIndex));
+
         
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
@@ -347,6 +358,10 @@ public class Fenetre extends JFrame {
                 }
             }
         });
+    }
+
+    public static JTextPane getTxtConsole() {
+        return txtConsole;
     }
 }
 

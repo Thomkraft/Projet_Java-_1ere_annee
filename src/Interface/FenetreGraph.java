@@ -85,11 +85,11 @@ public class FenetreGraph extends JInternalFrame {
             fenetre.afficherGraphiqueCourant();
         }
     }
-    
+
     public void addPrecButtonListener(ActionListener listener) {
         btnPrevious.addActionListener(listener);
     }
-    
+
     public void addIndiceTxtListener(ActionListener listener) {
         txtGraphNumber.addActionListener(listener);
     }
@@ -117,7 +117,7 @@ public class FenetreGraph extends JInternalFrame {
     public void setGraphIndex(int index) {
         txtGraphNumber.setText(Integer.toString(index));
     }
-    
+
     private void afficherBoutons(Container container) {
         // Ajout des ActionListeners pour les boutons Zoom moins et Zoom plus
         btnMoins.addActionListener(new ActionListener() {
@@ -152,7 +152,7 @@ public class FenetreGraph extends JInternalFrame {
         leftPanel.add(btnPrevious);
         leftPanel.add(txtGraphNumber);
         leftPanel.add(btnNext);
-        
+
         JPanel CenterPanel = new JPanel();
         CenterPanel.add(btnMoins);
         CenterPanel.add(btnPlus);

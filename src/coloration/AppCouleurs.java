@@ -51,7 +51,7 @@ public class AppCouleurs {
                         couleurs[couleurAttribuee].getRed() + "," +
                         couleurs[couleurAttribuee].getGreen() + "," +
                         couleurs[couleurAttribuee].getBlue() + ",255);" +
-                        "size: 20px;");
+                        "size: 15px;");
             }
 
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -78,6 +78,7 @@ public class AppCouleurs {
         // Affichage dans la console si dépassement du kmax donné dans le fichier de test
         int kmaxGraphe = graphe.getAttribute("kmax");
         if (nbCouleurs > kmaxGraphe) {
+            graphe.addAttribute("nouvKmax", nbCouleurs);
             System.out.println("Remarque : Dépassement du kmax donné | kmax initial : " + kmaxGraphe + "; nouveau kmax : " + nbCouleurs + "\n");
         }
     }
