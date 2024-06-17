@@ -1,8 +1,14 @@
-package application;
+package Application;
+
+import Interface.Fenetre;
+import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
-        // TODO code application logic here
+        SwingUtilities.invokeLater(() -> {
+            Fenetre fenetre = new Fenetre();
+            fenetre.setVisible(true);
+     
+        });
     }
-    
 }
