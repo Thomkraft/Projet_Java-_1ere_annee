@@ -172,6 +172,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                //fileChooser.setCurrentDirectory("..//");
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
@@ -189,6 +190,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                //fileChooser.setCurrentDirectory("..//");
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
@@ -200,6 +202,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                //fileChooser.setCurrentDirectory("..//");
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
@@ -217,14 +220,20 @@ public class Fenetre extends JFrame {
         });
 
         
-        // Ajout d'action listeners pour les autres boutons
+        // Ajouter un ActionListener pour le bouton Afficher Carte dans Fenetre
         btCarte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Afficher la carte
-                // Cette fonctionnalité reste à implémenter
+                SwingUtilities.invokeLater(() -> {
+                    String filePath = "C:\\Users\\totom\\OneDrive\\Cours\\S2\\projet_crash\\Data Test\\aeroports.txt";
+                    Carte carte = new Carte(filePath);
+                    carte.setVisible(true);
+                    carte.afficherCarteAvecVolPredefini();
+                });
             }
         });
+
+
 
         btTraiter.addActionListener(new ActionListener() {
             @Override
@@ -238,6 +247,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                //fileChooser.setCurrentDirectory("..//");
                 int option = fileChooser.showSaveDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
