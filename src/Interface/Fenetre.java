@@ -1,6 +1,5 @@
 package Interface;
 
-import Application.ChargerGraph;
 import File.OpenCsv;
 import File.OpenTxt;
 import File.WriteInTxt;
@@ -8,6 +7,8 @@ import Stockage.Aeroports;
 import Stockage.Colisions;
 import Stockage.Result;
 import Stockage.Vols;
+import TEST.GraphLoader;
+import coloration.ColoDSatur;
 import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,29 +24,29 @@ import javax.swing.border.EmptyBorder;
 import org.graphstream.graph.Graph;
 
 public class Fenetre extends JFrame {
-    JLabel lbImportGraph = new JLabel("Importer un graph:");
-    JButton btnImportGraph = new JButton("Importer");
-    JLabel lbInsertVol = new JLabel("Insérez une liste de vol :");
-    JLabel lbInsertionListeAeroport = new JLabel("Inserez une liste d'aéroport :");
-    JTextField txtInsertVol = new JTextField("");
-    JLabel lbKmax = new JLabel("Valeur de Kmax :");
-    JTextField txtKmax = new JTextField("");
-    JTextArea txtConsole = new JTextArea();
-    JButton btParcourirVols = new JButton("Parcourir");
-    JButton btTraiter = new JButton("Traiter");
-    JButton btExporter = new JButton("Exporter");
-    JButton btCarte = new JButton("Afficher la carte");
-    JButton btParcourirAeroports = new JButton("Parcourir");
+    private JLabel lbImportGraph = new JLabel("Importer un graph:");
+    private JButton btnImportGraph = new JButton("Importer");
+    private JLabel lbInsertVol = new JLabel("Insérez une liste de vol :");
+    private JLabel lbInsertionListeAeroport = new JLabel("Inserez une liste d'aéroport :");
+    private JTextField txtInsertVol = new JTextField("");
+    private JLabel lbKmax = new JLabel("Valeur de Kmax :");
+    private JTextField txtKmax = new JTextField("");
+    private static JTextPane txtConsole = new JTextPane();
+    private JButton btParcourirVols = new JButton("Parcourir");
+    private JButton btTraiter = new JButton("Traiter");
+    private JButton btExporter = new JButton("Exporter");
+    private JButton btCarte = new JButton("Afficher la carte");
+    private JButton btParcourirAeroports = new JButton("Parcourir");
 
-    JPanel mainPanel = new JPanel(new GridBagLayout());
-    JDesktopPane graphPanel = new JDesktopPane();
+    private JPanel mainPanel = new JPanel(new GridBagLayout());
+    private JDesktopPane graphPanel = new JDesktopPane();
 
     private int currentGraphIndex = 0;
     private List<Graph> graphes;
 
     private String file2 = null; 
     private StringBuilder fileVolPaths = new StringBuilder();
-
+    private String aeroportFilePath = null;
     
     public Fenetre() {
         //Style fenetre
@@ -144,6 +145,11 @@ public class Fenetre extends JFrame {
         JScrollPane consoleScrollPane = new JScrollPane(txtConsole);
         consoleScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Politique de défilement horizontal
         consoleScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // Politique de défilement vertical
+
+        txtConsole.setBorder(BorderFactory.createEmptyBorder(7, 10, 7, 10));
+        txtConsole.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtConsole.setEditable(false);
+
         cont.gridx = 0;
         cont.gridy = 4;
         cont.gridwidth = 6;
@@ -153,7 +159,7 @@ public class Fenetre extends JFrame {
         mainPanel.add(consoleScrollPane, cont);
         
         // Fixer la taille préférée de la console
-        Dimension consolePreferredSize = new Dimension(0, 120); // Taille souhaitée (largeur automatique, hauteur 150 pixels)
+        Dimension consolePreferredSize = new Dimension(0, 100); // Taille souhaitée (largeur automatique, hauteur 150 pixels)
         consoleScrollPane.setPreferredSize(consolePreferredSize);
 
         // Bouton Afficher Carte
@@ -249,6 +255,29 @@ public class Fenetre extends JFrame {
                     }
                     //lbImportGraph.setText("Liste de graph chargé : "+ nameChargedFIle.toString());
                     
+                    List<String> noms_fichiers = new ArrayList<>();
+
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test0.txt");
+
+
+                    // Ajoutez d'autres noms de fichiers au besoin
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test1.txt");
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test2.txt");
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test3.txt");
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test4.txt");
+                    noms_fichiers.add("C:\\Users\\thoma\\Documents\\Data_Test_txt/graph-test5.txt");
+
+
+                    // Génération graphique du graphe
+                    List<Graph> graphes = GraphLoader.chargerGraphes(noms_fichiers); // Utilisation de charger_graphe depuis Application
+                    
+                    for (Graph g : graphes) {
+                        // Coloration des sommets
+                        //new ColoWelshPowellV2(g);
+                        new ColoDSatur(g);      
+                    }
+                    
+                    Fenetre.this.afficherGraphes(graphes);
                     
                 }
             }
@@ -259,12 +288,25 @@ public class Fenetre extends JFrame {
         btCarte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    String filePath = "C:\\Users\\thoma\\Documents\\Data_Test_txt/aeroports.txt";
-                    Carte carte = new Carte(filePath);
-                    carte.setVisible(true);
-                    carte.afficherCarteAvecVolPredefini();
-                });
+                
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            
+                            String filePath = file2;
+
+                            if(filePath == null) {
+                                throw new Exception();
+                            }
+
+                            Carte carte = new Carte(filePath);
+                            carte.setVisible(true);
+                            carte.afficherCarteAvecVolPredefini();
+                        } catch (Exception ex) {
+                            JOptionPane.showConfirmDialog(Fenetre.this, "Veuillez d'abord inserer une liste d'aéroport valide !","Erreur",JOptionPane.DEFAULT_OPTION);
+                            lbInsertionListeAeroport.setText("Inserez une liste d'aéroport :");
+                        }
+                    });
+                
             }
         });
 
@@ -295,12 +337,15 @@ public class Fenetre extends JFrame {
                         throw new Exception();
                     }
                     
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CsvValidationException ex) {
                     Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                     System.err.println("Mauvais format pour le fichier d'aéroport !");  
+                    lbInsertionListeAeroport.setText("Inserez une liste d'aéroport :");
+                    file2 = null;
                     return;
                 }
                 try {
@@ -429,6 +474,8 @@ public class Fenetre extends JFrame {
         graphPanel.revalidate();
         graphPanel.repaint();
         
+        //new InfosConsole(graphes.get(currentGraphIndex));
+        
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
             @Override
@@ -494,7 +541,14 @@ public class Fenetre extends JFrame {
                     afficherGraphiqueCourant();
                 }
             }
+            
+            
         });
+  
+    }
+    
+    public static JTextPane getTxtConsole() {
+        return txtConsole;
     }
 }
 

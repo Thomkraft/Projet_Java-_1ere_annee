@@ -37,8 +37,7 @@ public class Carte extends JFrame {
 
         GeoPosition franceCenter = new GeoPosition(46.603354, 1.888334);
         mapViewer.setAddressLocation(franceCenter);
-        mapViewer.setZoom(13); // Niveau de zoom pour voir toute la France
-
+        
         // Récupérer les waypoints depuis Aéroports
         waypoints = Aéroports.createWaypoints(filePath);
 
@@ -76,7 +75,7 @@ public class Carte extends JFrame {
         mapViewer.setAddressLocation(center);
 
         // Ajuster le niveau de zoom pour voir les deux points
-        mapViewer.setZoom(7); // Réglez le zoom approprié pour voir la France
+        mapViewer.setZoom(13); // Réglez le zoom approprié pour voir la France
 
         mapViewer.repaint();
     }
