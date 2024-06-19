@@ -58,7 +58,7 @@ public class Colisions {
                     return new Result(false);
                 }
                 nbColisions++;
-                System.out.println(vol1.getAéroportDépart()+"-"+vol1.getAéroportArrivée() + " en conflit avec " + vol2.getAéroportDépart()+"-"+vol2.getAéroportArrivée());
+                //System.out.println(vol1.getAéroportDépart()+"-"+vol1.getAéroportArrivée() + " en conflit avec " + vol2.getAéroportDépart()+"-"+vol2.getAéroportArrivée());
                 return new Result(true, new double[] {aeroportDepartVol1.getX(), aeroportDepartVol1.getY()}); 
                 
             } else { 

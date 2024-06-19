@@ -70,6 +70,7 @@ public class Fenetre extends JFrame {
         cont.insets = new Insets(5, 5, 5, 5);
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        txtKmax.setText("1");
         // Label Insert List vol
         cont.fill = GridBagConstraints.HORIZONTAL;
         cont.gridx = 0;
@@ -324,17 +325,18 @@ public class Fenetre extends JFrame {
                 } catch (CsvValidationException ex) {
                     Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(Fenetre.this, "Mauvais format pour le fichier d'aéroport !","Erreur", JOptionPane.OK_OPTION);
                     System.err.println("Mauvais format pour le fichier d'aéroport !");
                     return;
                 }
                 try {
                     if (Integer.parseInt(txtKmax.getText()) <= 0){
-                        txtWriter.setkMax(0);
+                        txtWriter.setkMax(1);
                     }else {
                         txtWriter.setkMax(Integer.parseInt(txtKmax.getText()));
                     }
                 }catch (NumberFormatException ex) {
-                    txtWriter.setkMax(0);
+                    txtWriter.setkMax(1);
                 }
 
                 String[] separationVolPath = fileVolPaths.toString().split(";");
@@ -381,7 +383,7 @@ public class Fenetre extends JFrame {
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    /*
                     System.out.println("-----------------------------------------------------------------------");
                     System.out.println("Fichier : " + file);
                     System.out.println("Nombre de colisions : " + colision.nbColisions);
@@ -390,8 +392,10 @@ public class Fenetre extends JFrame {
                     listeVol.clear();
                     colision.setNbColisions(0);
                     Vols.setNbVols(0);
+                    */
                 }
 
+                
                 System.out.println("------------------");
                 ArrayList<String> listPathFileUpdated = new ArrayList<>();
                 int m = 1;
@@ -401,7 +405,20 @@ public class Fenetre extends JFrame {
                     System.out.println("Fichier "+ m + " : " + path);
                     m++;
                 }
+                
+                
+                ArrayList<String> fileNames = new ArrayList<>();
 
+                int u = 1;
+                for (String lastFile : listPathFileUpdated) {
+                    fileNames.add(Integer.toString(u));
+                    u++;
+                }
+                
+                // Coloration du ou des graphes
+                List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
+                Fenetre.this.afficherGraphes(graphes, fileNames);
+                
         }
         });
 

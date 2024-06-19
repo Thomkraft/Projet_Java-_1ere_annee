@@ -30,6 +30,7 @@ public class ChargerGraph {
 
                 String line;
                 int nbArretes = 0;
+                int edgeCounter = 0;
                 while ((line = br.readLine()) != null) {
                     String[] tokens = line.split(" ");
                     if (tokens.length >= 2) {
@@ -43,7 +44,7 @@ public class ChargerGraph {
                         
                         String node1 = tokens[0];
                         String node2 = tokens[1];
-                        graph.addEdge(node1 + "_" + node2, node1, node2);
+                        graph.addEdge(node1 + "_" + node2 + "_" + edgeCounter++, node1, node2);
                         nbArretes += 1;
                     }
                 }
