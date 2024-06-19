@@ -20,6 +20,8 @@ public class ColoDSatur {
     }
 
     private void colorerGraphe() {
+        
+            
         // Tri des sommets selon la valeur décroissante de leur degré dans la liste listeSommets
         new TriSommets(graphe, listeSommets);
 

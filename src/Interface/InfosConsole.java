@@ -5,6 +5,8 @@ import org.graphstream.graph.Graph;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import org.graphstream.algorithm.ConnectedComponents;
+import static org.graphstream.algorithm.Toolkit.diameter;
 
 public class InfosConsole {
     JTextPane txtConsole = Fenetre.getTxtConsole();
@@ -22,6 +24,7 @@ public class InfosConsole {
         StyledDocument docConsole = txtConsole.getStyledDocument();
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet attributsConsole = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.RED);
+        AttributeSet attributsConsoleGreen = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.GREEN);
 
 
         try {
@@ -53,10 +56,21 @@ public class InfosConsole {
             if (g.getAttribute("erreurs") != null) {
                 docConsole.insertString(0, g.getAttribute("erreurs") + "\n", attributsConsole);
             }
+            
+            ConnectedComponents cc = new ConnectedComponents();
+            cc.init(g);
+            
+            String InfoSurLeGrapheColision = "Degés Moyen : " + g.getAttribute("nbSommets") + " | " +
+                    "Nombres de Composant : " + cc.getConnectedComponentsCount() + " | " +
+                    "Diametre : " + Math.round(diameter(g));
+            docConsole.insertString(0, InfoSurLeGrapheColision + "\n", null);
 
             // Ajout du fichier de test du graphe à la console
             String nomFichier = "Fichier testé : " + g.getAttribute("nomFichier");
             docConsole.insertString(0, nomFichier + "\n", null);
+            
+            
+            
 
         } catch (ClassCastException | BadLocationException e) {
             System.err.println(e.getMessage());

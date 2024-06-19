@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.graphstream.algorithm.ConnectedComponents;
+import org.graphstream.algorithm.Toolkit;
 
 public class ChargerGraph {
     public static List<Graph> charger_graphes(List<String> noms_fichiers) {
@@ -18,6 +20,11 @@ public class ChargerGraph {
             Graph graph = new MultiGraph(nom_fichier);
 
             try (BufferedReader br = new BufferedReader(new FileReader(nom_fichier))) {
+                
+                BufferedReader br2 = new BufferedReader(new FileReader(nom_fichier));
+                br2.readLine();
+                int nbMaxSommet = Integer.parseInt(br2.readLine());
+                
                 // Ajout du chemin du fichier de test du graphe au graphe en tant qu'attribut
                 graph.addAttribute("nomFichier", nom_fichier);
 
@@ -31,6 +38,7 @@ public class ChargerGraph {
                 String line;
                 int nbArretes = 0;
                 int edgeCounter = 0;
+                
                 while ((line = br.readLine()) != null) {
                     String[] tokens = line.split(" ");
                     if (tokens.length >= 2) {
@@ -48,10 +56,15 @@ public class ChargerGraph {
                         nbArretes += 1;
                     }
                 }
-
+                
+                
                 // Ajout du nombre d'arretes du graphe en tant qu'attribut
                 graph.addAttribute("nbArretes", nbArretes);
 
+                while (nbMaxSommet > graph.getNodeCount()){
+                    graph.addNode(Integer.toString(graph.getNodeCount()));
+                }
+                
             } catch (IOException | EdgeRejectedException e) {
                 String txtErreur = "Erreur : " + e.getMessage();
                 System.err.println(txtErreur);
@@ -64,7 +77,8 @@ public class ChargerGraph {
 
             // Coloration des graphes
             new ColoDSatur(graph);
-
+            
+            
             // Ajout des graphes dans une ArrayList
             graphes.add(graph);
         }

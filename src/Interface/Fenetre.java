@@ -21,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import org.graphstream.algorithm.ConnectedComponents;
+import static org.graphstream.algorithm.Toolkit.diameter;
 
 import org.graphstream.graph.Graph;
 
@@ -388,11 +390,12 @@ public class Fenetre extends JFrame {
                     System.out.println("Fichier : " + file);
                     System.out.println("Nombre de colisions : " + colision.nbColisions);
                     System.out.println("nombre de vols : " + Vols.nbVols);
+                    */
                     listeColisionVol.clear();
                     listeVol.clear();
                     colision.setNbColisions(0);
                     Vols.setNbVols(0);
-                    */
+                    
                 }
 
                 
@@ -409,10 +412,11 @@ public class Fenetre extends JFrame {
                 
                 ArrayList<String> fileNames = new ArrayList<>();
 
-                int u = 1;
+                
                 for (String lastFile : listPathFileUpdated) {
-                    fileNames.add(Integer.toString(u));
-                    u++;
+                    String[] separation = lastFile.split("\\\\");
+                    fileNames.add(separation[separation.length-1]);
+                    
                 }
                 
                 // Coloration du ou des graphes
@@ -446,7 +450,9 @@ public class Fenetre extends JFrame {
     }
     
     private String getFileNameFromGraph(int index) {
+        
         return fileNames.get(index);
+        
     }
     
     public int getCurrentGraphIndex() {
@@ -482,9 +488,13 @@ public class Fenetre extends JFrame {
         // Valider et rafraîchir graphPanel pour refléter les changements
         graphPanel.revalidate();
         graphPanel.repaint();
-
+        
+        
+       
         new InfosConsole(graphes.get(currentGraphIndex));
-
+        
+        
+        
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
             @Override

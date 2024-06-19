@@ -32,7 +32,7 @@ public class Colisions {
         Aeroports[] listeAeroportVol1 = getAeroport(vol1, listeAeroports);
         Aeroports[] listeAeroportVol2 = getAeroport(vol2, listeAeroports);
         
-        
+            
         //stock l'aéroport de départ du vol 1
         this.aeroportDepartVol1 = listeAeroportVol1[0];
         //stock l'aéroport d'arrivé du vol 1x
