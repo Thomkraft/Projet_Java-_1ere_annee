@@ -19,13 +19,18 @@ import java.util.Set;
 
 import application.Aéroports;
 import application.WaypointWithName;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 public class Carte extends JFrame {
 
     private JXMapViewer mapViewer;
     private FlightPainter flightPainter;
     private List<WaypointWithName> waypoints;
-
+    private JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
+    private JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
+    
     public Carte(String filePath) {
         init(filePath);
     }
@@ -33,14 +38,19 @@ public class Carte extends JFrame {
     private void init(String filePath) {
         mapViewer = new JXMapViewer();
         flightPainter = new FlightPainter();
+        
+        //Menu
+        JMenu Outils = new JMenu("Outils");
+        Outils.add(item1);
+        Outils.add(item2);
+        JMenuBar jmb = new JMenuBar();
+        jmb.add(Outils);
+        this.setJMenuBar(jmb);
+        
 
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
-
-        GeoPosition franceCenter = new GeoPosition(46.603354, 1.888334);
-        mapViewer.setAddressLocation(franceCenter);
-        mapViewer.setZoom(13); // Niveau de zoom pour voir toute la France
 
         // Récupérer les waypoints depuis Aéroports
         waypoints = Aéroports.createWaypoints(filePath);
@@ -87,7 +97,7 @@ public class Carte extends JFrame {
         mapViewer.setAddressLocation(center);
 
         // Ajuster le niveau de zoom pour voir les deux points
-        mapViewer.setZoom(7); // Réglez le zoom approprié pour voir la France
+        mapViewer.setZoom(13); // Réglez le zoom approprié pour voir la France
 
         mapViewer.repaint();
     }

@@ -268,21 +268,28 @@ public class Fenetre extends JFrame {
         
         // Ajouter un ActionListener pour le bouton Afficher Carte dans Fenetre
         btCarte.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    if (file2 == null || file2.isEmpty()) {
-                        // Afficher un message d'erreur si le fichier d'aéroport n'est pas chargé
-                        JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        // Utiliser le fichier d'aéroport chargé pour afficher la carte
-                        Carte carte = new Carte(file2);
-                        carte.setVisible(true);
-                        carte.afficherCarteAvecVolPredefini();
-                    }
-                });
-            }
-        });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SwingUtilities.invokeLater(() -> {
+                // Vérifier si aucun graphe n'a été chargé
+                if (graphes == null || graphes.isEmpty()) {
+                    JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un graph avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Vérifier si le fichier d'aéroport n'est pas chargé
+                if (file2 == null || file2.isEmpty()) {
+                    JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Utiliser le fichier d'aéroport chargé pour afficher la carte
+                Carte carte = new Carte(file2);
+                carte.setVisible(true);
+                carte.afficherCarteAvecVolPredefini();
+            });
+        }
+    });
 
 
 
