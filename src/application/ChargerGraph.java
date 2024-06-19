@@ -4,7 +4,6 @@ import coloration.ColoDSatur;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SingleGraph;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

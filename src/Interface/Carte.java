@@ -12,10 +12,13 @@ import org.jxmapviewer.input.ZoomMouseWheelListenerCenter;
 import org.jxmapviewer.painter.CompoundPainter;
 
 import javax.swing.JFrame;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Set;
+
 import application.Aéroports;
 import application.WaypointWithName;
-import java.util.Set;
 
 public class Carte extends JFrame {
 
@@ -51,16 +54,24 @@ public class Carte extends JFrame {
         mapViewer.setOverlayPainter(compoundPainter);
 
         // Ajouter des écouteurs pour la navigation à la souris
-        mapViewer.addMouseListener(new PanMouseInputListener(mapViewer));
-        mapViewer.addMouseMotionListener(new PanMouseInputListener(mapViewer));
+        PanMouseInputListener panMouseInputListener = new PanMouseInputListener(mapViewer);
+        mapViewer.addMouseListener(panMouseInputListener);
+        mapViewer.addMouseMotionListener(panMouseInputListener);
         mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCenter(mapViewer));
+
+        // Écouteur pour mettre à jour la position courante lors du relâchement de la souris
+        mapViewer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GeoPosition currentPosition = mapViewer.getCenterPosition();
+                mapViewer.setAddressLocation(currentPosition);
+            }
+        });
 
         getContentPane().add(mapViewer);
         setSize(1000, 800);
-        
         setLocationRelativeTo(null);
     }
-
 
     public void afficherCarteAvecVolPredefini() {
         GeoPosition start = new GeoPosition(48.856613, 2.352222); // Paris

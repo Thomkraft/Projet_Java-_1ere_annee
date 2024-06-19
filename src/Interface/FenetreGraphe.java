@@ -22,10 +22,12 @@ public class FenetreGraphe extends JInternalFrame {
     private boolean isFullScreen = false;
     private JFrame fullScreenFrame;
     private Fenetre fenetre;
+    private String fileName;
 
-    public FenetreGraphe(Graph graph, Fenetre fenetre) {
-        super("Graphes", false, false, false, false);
-        this.fenetre = fenetre; // Assign the passed Fenetre object to the local fenetre variable
+    public FenetreGraphe(Graph graph, Fenetre fenetre, String fileName) {
+        super(fileName, false, false, false, false);
+        this.fenetre = fenetre;
+        this.fileName = fileName; 
         setSize(1170, 400);
 
         viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);

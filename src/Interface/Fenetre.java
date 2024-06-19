@@ -44,6 +44,7 @@ public class Fenetre extends JFrame {
 
     private int currentGraphIndex = 0;
     private List<Graph> graphes;
+    private List<String> fileNames;
 
     private String file2 = null;
     private StringBuilder fileVolPaths = new StringBuilder();
@@ -194,6 +195,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
@@ -222,6 +224,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
@@ -242,25 +245,22 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
-                StringBuilder nameChargedFIle = new StringBuilder();
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File[] files = fileChooser.getSelectedFiles();
                     ArrayList<String> filePaths = new ArrayList<>();
+                    ArrayList<String> fileNames = new ArrayList<>();
 
                     for (File file : files) {
                         filePaths.add(file.getAbsolutePath());
-
-                        String[] separation = file.getAbsolutePath().split("\\\\");
-                        nameChargedFIle.append(separation[separation.length-1]).append(";");
+                        fileNames.add(file.getName());
                     }
 
                     // Coloration du ou des graphes
                     List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
-                    Fenetre.this.afficherGraphes(graphes);
-
-                    //lbImportGraph.setText("Liste de graph chargé : "+ nameChargedFIle.toString());
+                    Fenetre.this.afficherGraphes(graphes, fileNames);
                 }
             }
         });
@@ -271,13 +271,19 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
-                    String filePath = "C:\\Users\\thoma\\Documents\\Data_Test_txt/aeroports.txt";
-                    Carte carte = new Carte(filePath);
-                    carte.setVisible(true);
-                    carte.afficherCarteAvecVolPredefini();
+                    if (file2 == null || file2.isEmpty()) {
+                        // Afficher un message d'erreur si le fichier d'aéroport n'est pas chargé
+                        JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Utiliser le fichier d'aéroport chargé pour afficher la carte
+                        Carte carte = new Carte(file2);
+                        carte.setVisible(true);
+                        carte.afficherCarteAvecVolPredefini();
+                    }
                 });
             }
         });
+
 
 
 
@@ -396,7 +402,7 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                //fileChooser.setCurrentDirectory("..//");
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 int option = fileChooser.showSaveDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
@@ -409,18 +415,31 @@ public class Fenetre extends JFrame {
         
     }
 
-    public void afficherGraphes(List<Graph> graphes) {
+    public void afficherGraphes(List<Graph> graphes, List<String> fileNames) {
         this.graphes = graphes;
+        this.fileNames = fileNames;
         afficherGraphiqueCourant();
     }
+    
+    private String getFileNameFromGraph(int index) {
+        return fileNames.get(index);
+    }
+    
+    public int getCurrentGraphIndex() {
+        return currentGraphIndex;
+    }
 
+    // Modifier afficherGraphiqueCourant pour mettre à jour l'indice du graphique
     void afficherGraphiqueCourant() {
         // Supprimer tous les composants graphiques actuellement présents dans graphPanel
         graphPanel.removeAll();
 
-        // Créer une instance de FenetreGraph avec le graph courant
-        FenetreGraphe fenetreGraph = new FenetreGraphe(graphes.get(currentGraphIndex), this); // Pass Fenetre object
-        fenetreGraph.setGraphIndex(currentGraphIndex + 1); // Set the current graph index
+        // Create an instance of FenetreGraphe with the current graph and the file name
+        String fileName = getFileNameFromGraph(currentGraphIndex);
+        FenetreGraphe fenetreGraph = new FenetreGraphe(graphes.get(currentGraphIndex), this, fileName); // Pass the file name
+
+        // Mettre à jour l'indice du graphique dans fenetreGraph
+        fenetreGraph.setGraphIndex(currentGraphIndex + 1); // Les indices des graphiques commencent à 1 pour l'utilisateur
 
         // Ajouter FenetreGraph à graphPanel
         graphPanel.add(fenetreGraph);
@@ -440,9 +459,7 @@ public class Fenetre extends JFrame {
         graphPanel.revalidate();
         graphPanel.repaint();
 
-
         new InfosConsole(graphes.get(currentGraphIndex));
-
 
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
