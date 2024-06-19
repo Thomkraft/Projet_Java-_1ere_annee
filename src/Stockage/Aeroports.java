@@ -19,8 +19,6 @@ public class Aeroports {
         this.codeAeroport = codeAeroport;
         this.lieu = lieu;
         
-        //A transformer
-        
         double valeurLatitude = (double) Math.toRadians(intoDecimaux(latitude));
         double valeurLongitude = (double) Math.toRadians(intoDecimaux(longitude));
         
@@ -53,7 +51,9 @@ public class Aeroports {
         return y;
     }
     
-    
+    public String getNom() {
+        return lieu;
+    }
 
     private double intoDecimaux(String value){
         int coef;
