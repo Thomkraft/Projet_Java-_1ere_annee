@@ -263,6 +263,15 @@ public class Fenetre extends JFrame {
 
                     // Coloration du ou des graphes
                     List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
+                    
+                    
+                    WriteInTxt txtWriter = new WriteInTxt();
+                    try {
+                        txtWriter.writeInFileResultColoration(graphes);
+                    } catch (IOException ex) {
+                        System.out.println("erreur");
+                    }
+                    
                     Fenetre.this.afficherGraphes(graphes, fileNames);
                 }
             }
@@ -421,6 +430,13 @@ public class Fenetre extends JFrame {
                 
                 // Coloration du ou des graphes
                 List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
+                txtWriter = new WriteInTxt();
+                try {
+                    txtWriter.writeInFileResultColoration(graphes);
+                } catch (IOException ex) {
+                    System.out.println("erreur");
+                }
+                
                 Fenetre.this.afficherGraphes(graphes, fileNames);
                 
         }

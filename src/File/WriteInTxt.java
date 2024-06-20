@@ -1,11 +1,13 @@
 package File;
 
 import Stockage.Vols;
+import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.graphstream.graph.Graph;
 
 /**
  *
@@ -36,6 +38,74 @@ public class WriteInTxt {
         } else {
             System.out.println("Le fichier " + fileName + ".txt existe déjà dans ResultatsColisions.");
         }
+    }
+
+    
+    public void writeInFileResultColoration(List<Graph> graphes) throws IOException{
+        
+        File directory = new File("./ResultatColoration");
+        if (!directory.exists()) {
+            if (directory.mkdir()) {
+                System.out.println("Répertoire ResultatColoration créé avec succès.");
+            } else {
+                System.out.println("Erreur lors de la création du répertoire ResultatColoration.");
+                return;
+            }
+        } else {
+            System.out.println("Le répertoire ResultatColoration existe déjà.");
+        }
+        
+        boolean csvCreated = false;
+        for (Graph g : graphes) {
+            
+            
+            String nomFichier = g.getAttribute("nomFichier").toString();
+            String[] separation = nomFichier.split("\\\\");
+            separation = separation[separation.length-1].split("/");
+            
+            
+            System.out.println(separation[separation.length-1]);
+            File myFile = new File("./ResultatColoration/" + separation[separation.length-1]);
+            
+            if(myFile.createNewFile()){
+                    System.out.println("Le fichier : " + separation[separation.length-1] + " A bien été crée");
+                } else {
+                    System.out.println("Le fichier " + separation[separation.length-1] + " existe déjà dans ResultatsColisions.");
+            }
+            
+            String filePath = "./ResultatColoration/" + separation[separation.length-1];
+            FileWriter myFileWriter = new FileWriter(filePath);
+            
+           
+            
+            for (int i = 0; i < g.getNodeCount(); i++){
+                Object couleur = g.getNode(i).getAttribute("couleur");
+                String couleurString = couleur.toString();
+                int intCouleur = Integer.parseInt(couleurString) + 1;
+                myFileWriter.write(g.getNode(i) + " ; " + intCouleur +"\n");
+            }
+            
+            myFileWriter.close();
+            CSVWriter writer = null;
+            
+            if (!csvCreated){
+                writer = new CSVWriter(new FileWriter("./ResultatColoration/coloration-groupe2.Y.csv"));
+                csvCreated = true;
+            } else {
+            
+                writer = new CSVWriter(new FileWriter("./ResultatColoration/coloration-groupe2.Y.csv", true));
+            }
+            String[] values = new String[]{separation[separation.length-1] + ";" + g.getAttribute("nbConflits").toString()};
+            writer.writeNext(values);
+        
+            writer.close();
+            
+            
+            System.out.println("Écriture réussie dans le fichier " + separation[separation.length-1] + ".txt.");
+        }
+        
+        
+        
     }
     
     // Gestion d'erreur si kmax = -1 alors erreur
