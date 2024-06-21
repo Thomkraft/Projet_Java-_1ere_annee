@@ -8,14 +8,30 @@ import java.awt.*;
 import org.graphstream.algorithm.ConnectedComponents;
 import static org.graphstream.algorithm.Toolkit.diameter;
 
+/**
+ * La classe {@code InfosConsole} affiche des informations sur un graphe dans une console graphique.
+ * Cette classe permet de visualiser divers attributs et statistiques d'un graphe,
+ * tels que le nombre de sommets, d'arêtes, le temps d'exécution de la coloration, etc.
+ *
+ * @author Alec Petit-Siejak
+ */
 public class InfosConsole {
     JTextPane txtConsole = Fenetre.getTxtConsole();
 
-    // Constructeur
+    /**
+     * Construit un objet {@code InfosConsole} et affiche les informations du graphe spécifié.
+     *
+     * @param g le graphe pour lequel les informations doivent être affichées
+     */
     public InfosConsole(Graph g) {
         afficherInfosGraphes(g);
     }
 
+    /**
+     * Affiche les informations détaillées du graphe dans la console.
+     *
+     * @param g le graphe dont les informations doivent être affichées
+     */
     private void afficherInfosGraphes(Graph g) {
         // Effacement des informations déjà présentes dans la console
         txtConsole.setText("");
@@ -68,9 +84,6 @@ public class InfosConsole {
             // Ajout du fichier de test du graphe à la console
             String nomFichier = "Fichier testé : " + g.getAttribute("nomFichier");
             docConsole.insertString(0, nomFichier + "\n", null);
-            
-            
-            
 
         } catch (ClassCastException | BadLocationException e) {
             System.err.println(e.getMessage());

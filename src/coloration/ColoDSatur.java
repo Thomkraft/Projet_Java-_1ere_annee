@@ -7,21 +7,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+/**
+ * La classe {@code ColoDSatur} implémente l'algorithme DSatur pour la coloration de graphes.
+ * L'algorithme colore un graphe de manière à ce que deux nœuds adjacents n'aient pas la même couleur
+ * et tente de minimiser le nombre de couleurs utilisées.
+ *
+ * @author Alec Petit-Siejak
+ */
 public class ColoDSatur {
     // Attributs
     private final ArrayList<Node> listeSommets = new ArrayList<>();
     private final Graph graphe;
 
-    // Constructeur
+    /**
+     * Construit un objet {@code ColoDSatur} et lance le processus de coloration du graphe.
+     *
+     * @param graphe le graphe à colorier
+     */
     public ColoDSatur(Graph graphe) {
         this.graphe = graphe;
 
         colorerGraphe();
     }
 
+    /**
+     * Colore le graphe en utilisant l'algorithme DSatur.
+     */
     private void colorerGraphe() {
-        
-            
         // Tri des sommets selon la valeur décroissante de leur degré dans la liste listeSommets
         new TriSommets(graphe, listeSommets);
 
@@ -84,6 +96,9 @@ public class ColoDSatur {
             ajoutSommetColorie(choixSommet);
         }
 
+        // Ajout du nombre de conflits en tant qu'attribut du graphe
+        graphe.setAttribute("nbConflits", nombreConflits());
+
         // Fin du chronometre pour la coloration du graphe
         long finChrono = System.currentTimeMillis();
         graphe.addAttribute("finChrono", finChrono);
@@ -92,12 +107,18 @@ public class ColoDSatur {
         new AppCouleurs(graphe);
     }
 
-
+    /**
+     * Vérifie si le graphe est entièrement colorié.
+     *
+     * @return {@code true} si le graphe est colorié, {@code false} sinon
+     */
     private boolean estGrapheColorie() {
         return listeSommets.isEmpty();
     }
 
-
+    /**
+     * Attribue les valeurs DSAT à chaque sommet.
+     */
     private void attributionDSATSommets() {
         ArrayList<Integer> couleursUtilisees = new ArrayList<>();
         Iterator<Node> itVoisinsSommet;
@@ -125,7 +146,11 @@ public class ColoDSatur {
         }
     }
 
-
+    /**
+     * Sélectionne le sommet avec la valeur DSAT maximale.
+     *
+     * @return le sommet avec la valeur DSAT la plus élevée
+     */
     private Node sommetDSATMax() {
         Node sommetDsatMax = listeSommets.getFirst();
 
@@ -139,7 +164,11 @@ public class ColoDSatur {
         return sommetDsatMax;
     }
 
-
+    /**
+     * Supprime le sommet colorié de la liste des sommets non coloriés.
+     *
+     * @param sommetColorie le sommet qui a été colorié
+     */
     private void ajoutSommetColorie(Node sommetColorie) {
         // Suppression du sommet de la liste des sommets
         Iterator<Node> itSommets = listeSommets.iterator();
@@ -154,6 +183,13 @@ public class ColoDSatur {
         }
     }
 
+    /**
+     * Assigne une couleur à un sommet lorsque le nombre de couleurs disponibles dépasse {@code kmax}.
+     *
+     * @param sommetChoisi le sommet à colorier
+     * @param kmax le nombre maximal de couleurs autorisées
+     * @return la couleur la moins fréquente parmi les nœuds adjacents
+     */
     private int couleurDepassementKmax(Node sommetChoisi, int kmax) {
         // Initialisation d'une ArrayList du nombre de couleurs pour chaque couleurs adjacentes
         int[] couleursAdjacentes = new int[kmax];
@@ -181,10 +217,29 @@ public class ColoDSatur {
             indexCouleur += 1;
         }
 
-        // Incrémentation du compteur du nombre de conflit
-        int nbConflits = graphe.getAttribute("nbConflits");
-        graphe.setAttribute("nbConflits", nbConflits + 1);
-
         return couleurMin;
+    }
+
+    /**
+     * Calcule le nombre de conflits dans le graphe colorié.
+     *
+     * @return le nombre de conflits
+     */
+    private int nombreConflits() {
+        int nbConflits = 0;
+        Iterator<Node> itSommetsVoisins;
+
+        for (Node n : graphe) {
+            itSommetsVoisins = n.getNeighborNodeIterator();
+
+            while (itSommetsVoisins.hasNext()) {
+                Node sommetVoisinTeste = itSommetsVoisins.next();
+                if (sommetVoisinTeste.getAttribute("couleur").equals(n.getAttribute("couleur"))) {
+                    nbConflits += 1;
+                }
+            }
+        }
+
+        return (nbConflits / 2);
     }
 }
