@@ -19,6 +19,7 @@ public class Colisions {
     private Aeroports aeroportArriveVol2;
     private double coefDirecteurVol1;
     private double coefDirecteurVol2;
+    private int marge = 15;
     
     public int nbColisions = 0;
     
@@ -198,7 +199,11 @@ public class Colisions {
     private boolean plusDe15Minutes(int minutes1, int minutes2){
 
         
-        return (Math.abs(minutes1-minutes2) >= 15);
+        return (Math.abs(minutes1-minutes2) >= marge);
+    }
+
+    public void setMarge(int marge) {
+        this.marge = marge;
     }
     
     public double averageDegree(List<String> listeColisions){

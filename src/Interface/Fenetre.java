@@ -375,7 +375,23 @@ public class Fenetre extends JFrame {
                         txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         continue;
                     }
-
+                    
+                    int marge = 15;
+                    try {
+                        String reponse = JOptionPane.showInputDialog(null, "Donnez la marge pour colisions (15 minutes si rien n'est modifié ou erreur de format) : ", "Changement marge de colision", JOptionPane.QUESTION_MESSAGE);
+                        int reponseINT = Integer.parseInt(reponse);
+                        if (reponseINT != 15 && reponseINT > 0) {
+                            colision.setMarge(reponseINT);
+                        } else {
+                            colision.setMarge(marge);
+                        }
+                    
+                    } catch (NumberFormatException ex) {
+                        colision.setMarge(marge);
+                    }
+                    
+                    
+                        
                     for(int i = 0; i < listeVol.size() ;  i++){
                         for(int j = i + 1 ; j < listeVol.size() ; j++){
 
