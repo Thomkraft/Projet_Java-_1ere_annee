@@ -1,7 +1,0 @@
-/// IDEES DE TRUCS A FAIRE
-
-// Si plusieurs algos de coloration :
-    - faire un algo qui test tous les fichiers de test en prenant à chaque fois différents algos (boucle)
-    - pour chaque graphe, ajouter dans la console : nom du fichier testé, nom de l'algo utilisé, temps mis pour colorer le graphe
-
--> A la fin, afficher temps total pour colorer tous les graphes
