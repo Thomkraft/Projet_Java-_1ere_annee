@@ -2,6 +2,7 @@ package Interface;
 
 import File.OpenCsv;
 import File.OpenTxt;
+import File.WriteInCSV;
 import File.WriteInTxt;
 import Stockage.Aeroports;
 import Stockage.Colisions;
@@ -50,6 +51,9 @@ public class Fenetre extends JFrame {
 
     private String file2 = null;
     private StringBuilder fileVolPaths = new StringBuilder();
+    
+    private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
+    private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
 
 
     public Fenetre() {
@@ -268,6 +272,8 @@ public class Fenetre extends JFrame {
                     WriteInTxt txtWriter = new WriteInTxt();
                     try {
                         txtWriter.writeInFileResultColoration(graphes);
+                        listLastColoFileUpdates = txtWriter.getListLastColoFileUpdates();
+                        listLastGraphColo = txtWriter.getListLastGraphColo();
                     } catch (IOException ex) {
                         System.out.println("erreur");
                     }
@@ -324,6 +330,8 @@ public class Fenetre extends JFrame {
                 List<Vols> listeVol = null;
                 List<String> listeColisionVol = new ArrayList<>();
                 List<Aeroports> listeAeroport = null;
+                
+                List<String> listeFichierErroné = new ArrayList<>();
 
                 try {
                     listeAeroport = openTxt.LectureTxtAéroports(file2);
@@ -354,6 +362,7 @@ public class Fenetre extends JFrame {
                 String[] resultFileName;
                 //Boucle pour comparer chaque vols a tous les vols
                 //tous les fichiers
+                boolean traité = false;
                 for(int k = 0; k <= separationVolPath.length-1; k++){
                     file = separationVolPath[k];
                     resultFileName = file.split("-");
@@ -372,25 +381,26 @@ public class Fenetre extends JFrame {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (Exception ex) {
                         String[] separation = file.split("\\\\");
-                        txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                        listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                        //txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         continue;
                     }
-                    
-                    int marge = 15;
-                    try {
-                        String reponse = JOptionPane.showInputDialog(null, "Donnez la marge pour colisions (15 minutes si rien n'est modifié ou erreur de format) : ", "Changement marge de colision", JOptionPane.QUESTION_MESSAGE);
-                        int reponseINT = Integer.parseInt(reponse);
-                        if (reponseINT != 15 && reponseINT > 0) {
-                            colision.setMarge(reponseINT);
-                        } else {
+                    if (!traité){
+                        int marge = 15;
+                        try {
+                            String reponse = JOptionPane.showInputDialog(null, "Donnez la marge pour colisions (15 minutes si rien n'est modifié ou erreur de format) : ", "Changement marge de colision", JOptionPane.QUESTION_MESSAGE);
+                            int reponseINT = Integer.parseInt(reponse);
+                            if (reponseINT != 15 && reponseINT > 0) {
+                                colision.setMarge(reponseINT);
+                            } else {
+                                colision.setMarge(marge);
+                            }
+
+                        } catch (NumberFormatException ex) {
                             colision.setMarge(marge);
                         }
-                    
-                    } catch (NumberFormatException ex) {
-                        colision.setMarge(marge);
+                        traité = true;
                     }
-                    
-                    
                         
                     for(int i = 0; i < listeVol.size() ;  i++){
                         for(int j = i + 1 ; j < listeVol.size() ; j++){
@@ -423,6 +433,14 @@ public class Fenetre extends JFrame {
                     
                 }
 
+                StringBuilder fichierErronnéMessage = new StringBuilder();
+                
+                for (String message: listeFichierErroné) {
+                    fichierErronnéMessage.append(message).append("\n");
+                }
+                if (!fichierErronnéMessage.toString().equals("")){
+                    JOptionPane.showMessageDialog(Fenetre.this, fichierErronnéMessage, "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
                 
                 System.out.println("------------------");
                 ArrayList<String> listPathFileUpdated = new ArrayList<>();
@@ -448,7 +466,11 @@ public class Fenetre extends JFrame {
                 List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
                 txtWriter = new WriteInTxt();
                 try {
+                    
                     txtWriter.writeInFileResultColoration(graphes);
+                    listLastColoFileUpdates = txtWriter.getListLastColoFileUpdates();
+                    listLastGraphColo = txtWriter.getListLastGraphColo();
+                    
                 } catch (IOException ex) {
                     System.out.println("erreur");
                 }
@@ -463,11 +485,21 @@ public class Fenetre extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                
                 int option = fileChooser.showSaveDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
+                    File dossier = fileChooser.getSelectedFile();
+                    System.out.println(dossier.getAbsolutePath());
+                    
                     // Exporter les résultats dans le fichier
-                    // Cette fonctionnalité reste à implémenter
+                    WriteInCSV csvWriter = new WriteInCSV(listLastColoFileUpdates,listLastGraphColo,Fenetre.this);
+                    
+                    try {
+                        csvWriter.WriteFinalCSVColoFile(dossier.getAbsolutePath()+ "\\\\");
+                    } catch (IOException ex) {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });

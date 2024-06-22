@@ -16,6 +16,8 @@ import org.graphstream.graph.Graph;
 public class WriteInTxt {
     private int kMaximum = -1;
     private ArrayList<String> listLastFileUpdated = new ArrayList<>();
+    private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
+    private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
     
     public static void createResultatsColisionsDirectory() {
         File directory = new File("./ResultatsColisions");
@@ -42,6 +44,9 @@ public class WriteInTxt {
 
     
     public void writeInFileResultColoration(List<Graph> graphes) throws IOException{
+        
+        this.listLastColoFileUpdates = new ArrayList<>();
+        this.listLastGraphColo = new ArrayList<>();
         
         File directory = new File("./ResultatColoration");
         if (!directory.exists()) {
@@ -87,6 +92,10 @@ public class WriteInTxt {
             
             myFileWriter.close();
             CSVWriter writer = null;
+            
+            listLastGraphColo.add(g);
+            listLastColoFileUpdates.add(myFile.getAbsolutePath());
+            
             
             if (!csvCreated){
                 writer = new CSVWriter(new FileWriter("./ResultatColoration/coloration-groupe2.Y.csv"));
@@ -180,4 +189,14 @@ public class WriteInTxt {
     public void setListLastFileUpdated(ArrayList<String> listLastFileUpdated) {
         this.listLastFileUpdated = listLastFileUpdated;
     }
+
+    public ArrayList<String> getListLastColoFileUpdates() {
+        return listLastColoFileUpdates;
+    }
+
+    public ArrayList<Graph> getListLastGraphColo() {
+        return listLastGraphColo;
+    }
+    
+    
 }
