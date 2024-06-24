@@ -8,7 +8,6 @@ import Stockage.StockageAeroports;
 import Stockage.Colisions;
 import Stockage.Vols;
 import application.ChargerGraph;
-import coloration.ColoDSatur;
 import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,14 +20,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import org.graphstream.algorithm.ConnectedComponents;
-import static org.graphstream.algorithm.Toolkit.diameter;
-
 import org.graphstream.graph.Graph;
+
+
 /**
- *
- * @author tom
+ * Fenêtre principale de l'application, permettant l'importation et la gestion des graphes et des vols.
  * 
+ * @author tom
  */
 public class Fenetre extends JFrame {
     JLabel lbImportGraph = new JLabel("Importer un graph:");
@@ -48,18 +46,23 @@ public class Fenetre extends JFrame {
     JPanel mainPanel = new JPanel(new GridBagLayout());
     JDesktopPane graphPanel = new JDesktopPane();
 
+
     private int currentGraphIndex = 0;
     private List<Graph> graphes;
     private List<String> fileNames;
+    private List<Vols> listeVol = new ArrayList();
 
-    private String file2 = null;
+    private String fichierAeroport = null;
     private StringBuilder fileVolPaths = new StringBuilder();
     
     private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
     private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
     private List<StockageAeroports> listeAeroport = new ArrayList<>();
 
-
+    /**
+     * Constructeur de la classe Fenetre.
+     * Initialise l'interface graphique et les écouteurs d'événements.
+     */
     public Fenetre() {
         //Style fenetre
         try {
@@ -72,6 +75,11 @@ public class Fenetre extends JFrame {
         initialisationVue();
         ajouterActionListeners();
     }
+
+    /**
+     * Initialise les composants de l'interface graphique.
+     * @author tom
+    */
 
     private void initialisationVue() {
         this.setTitle("Projet_Crash");
@@ -201,8 +209,18 @@ public class Fenetre extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Ajoute les écouteurs d'événements aux boutons de l'interface graphique.
+     * @author tom
+     */
     private void ajouterActionListeners() {
         btParcourirVols.addActionListener(new ActionListener() {
+            /**
+             * Action à réaliser lors du clic sur le bouton "Parcourir Vols".
+             * Ouvre une fenêtre de dialogue pour sélectionner les fichiers de vols.
+             * @author tom/thomas
+             * @param e l'événement de clic
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -232,6 +250,12 @@ public class Fenetre extends JFrame {
         });
 
         btParcourirAeroports.addActionListener(new ActionListener() {
+            /**
+             * Action à réaliser lors du clic sur le bouton "Parcourir Aéroports".
+             * Ouvre une fenêtre de dialogue pour sélectionner le fichier des aéroports.
+             * @author tom/thomas
+             * @param e l'événement de clic
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -239,9 +263,8 @@ public class Fenetre extends JFrame {
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    //txtInsertVol.setText(file.getAbsolutePath());
 
-                    file2 = file.getAbsolutePath();
+                    fichierAeroport = file.getAbsolutePath();
 
                     String[] separation = file.getAbsolutePath().split("\\\\");
 
@@ -287,12 +310,20 @@ public class Fenetre extends JFrame {
             }
         });
 
+
         
         // Ajouter un ActionListener pour le bouton Afficher Carte dans Fenetre
         btCarte.addActionListener(new ActionListener() {
+            /**
+             * Action à réaliser lors du clic sur le bouton "Afficher la Carte".
+             * Affiche une carte graphique des aéroports et des vols.
+             * @author tom
+             * @param e l'événement de clic
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Graph graph = getGraphCourant();
+                String cheminTxtColo = getListLastColoFileUpdates();
                 SwingUtilities.invokeLater(() -> {
                     
                     // Vérifier si aucun graphe n'a été chargé
@@ -302,13 +333,13 @@ public class Fenetre extends JFrame {
                     }
 
                     // Vérifier si le fichier d'aéroport n'est pas chargé
-                    if (file2 == null || file2.isEmpty()) {
+                    if (fichierAeroport == null || fichierAeroport.isEmpty()) {
                         JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
                     // Utiliser le fichier d'aéroport chargé pour afficher la carte
-                    Carte carte = new Carte(file2,graph);
+                    Carte carte = new Carte(fichierAeroport,graph,cheminTxtColo,listeVol);
                     carte.setVisible(true);
                     carte.afficherCarteAvecVolPredefini();
                 });
@@ -319,26 +350,33 @@ public class Fenetre extends JFrame {
 
 
         btTraiter.addActionListener(new ActionListener() {
+            /**
+             * Action à réaliser lors du clic sur le bouton "Traiter".
+             * Traite les données des vols et affiche les résultats.
+             * @author tom/thomas
+             * @param e l'événement de clic
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Traiter les fichiers et utiliser kmax si spécifié
 
 
                 String file;
+                //String file2 = "C:\\Users\\thoma\\Documents\\IUT\\1ère_année\\2-semestre\\2-Sae_crash\\Data_Test_txt/aeroports.txt";
 
 
                 OuvrirCsv openCsv = new OuvrirCsv();
                 OpenTxt openTxt = new OpenTxt();
                 Colisions colision = new Colisions();
                 EcrireDansTxt txtWriter = new EcrireDansTxt();
-
-                List<Vols> listeVol = null;
+                listeVol = null;
+                
                 List<String> listeColisionVol = new ArrayList<>();
                 List<StockageAeroports> listeAeroport = null;
                 
                 List<String> listeFichierErroné = new ArrayList<>();
                 try {
-                    listeAeroport = openTxt.LectureTxtAéroports(file2);
+                    listeAeroport = openTxt.LectureTxtAéroports(fichierAeroport);
                     if(listeAeroport == null) {
                         throw new Exception();
                     }
@@ -364,7 +402,6 @@ public class Fenetre extends JFrame {
 
                 String[] separationVolPath = fileVolPaths.toString().split(";");
                 String[] resultFileName;
-                
                 //Boucle pour comparer chaque vols a tous les vols
                 //tous les fichiers
                 boolean traité = false;
@@ -375,10 +412,10 @@ public class Fenetre extends JFrame {
 
                     try {
                         listeVol = openCsv.LectureCsvVols(file);
+                        System.out.println("Vol ajouté à la liste : " + listeVol);
                         if (listeVol == null){
                             throw new Exception();
                         }
-
 
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
@@ -419,6 +456,7 @@ public class Fenetre extends JFrame {
                             
                         }
                     }
+
 
                     try {
                         txtWriter.ecritureDansFichier("ColisionVol-" + fileName, (ArrayList<String>) listeColisionVol, Vols.nbVols, txtWriter.getkMax());
@@ -481,6 +519,7 @@ public class Fenetre extends JFrame {
                 }
                 
                 Fenetre.this.afficherGraphes(graphes, fileNames);
+
                 
         }
         });
@@ -508,10 +547,18 @@ public class Fenetre extends JFrame {
                 }
             }
         });
+
         
         
     }
-
+    
+    /**
+    * Affiche les graphes à partir des listes spécifiées et affiche le graphique courant.
+    * 
+    * @author tom
+    * @param graphes Liste des graphes à afficher
+    * @param fileNames Liste des noms de fichiers associés aux graphes
+    */
     public void afficherGraphes(List<Graph> graphes, List<String> fileNames) {
         this.graphes = graphes;
         this.fileNames = fileNames;
@@ -524,12 +571,24 @@ public class Fenetre extends JFrame {
         
     }
     
+    /**
+    * Retourne l'index du graphique courant.
+    * 
+    * @author tom
+    */
     public int getCurrentGraphIndex() {
         return currentGraphIndex;
     }
 
-    // Modifier afficherGraphiqueCourant pour mettre à jour l'indice du graphique
-    void afficherGraphiqueCourant() {
+    /**
+    * Affiche le graphique courant dans le panneau graphique.
+    * Supprime tous les composants graphiques actuellement présents dans graphPanel et ajoute FenetreGraphe correspondant.
+    * Met à jour l'indice du graphique dans FenetreGraphe et gère les actions des boutons et champs de texte associés.
+    * Affiche également les informations dans la console.
+    * 
+    * @author tom
+    */
+    public void afficherGraphiqueCourant() {
         // Supprimer tous les composants graphiques actuellement présents dans graphPanel
         graphPanel.removeAll();
 
@@ -566,6 +625,11 @@ public class Fenetre extends JFrame {
         
         // Ajouter un ActionListener pour le champ txtGraphNumber dans FenetreGraph
         fenetreGraph.addIndiceTxtListener(new ActionListener() {
+            /**
+            * Ajuste l'indice du graph courant
+            * @author tom
+            * @param e l'événement de clic
+            */
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Récupérer le texte saisi dans le JTextField
@@ -595,6 +659,11 @@ public class Fenetre extends JFrame {
 
         // Ajouter un ActionListener pour le bouton Précédent de FenetreGraph
         fenetreGraph.addPrecButtonListener(new ActionListener() {
+            /**
+            * permet de passer au graph precedent
+            * @author tom
+            * @param e l'événement de clic
+            */
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentGraphIndex > 0) {
@@ -614,6 +683,11 @@ public class Fenetre extends JFrame {
 
         // Ajouter un ActionListener pour le bouton Suivant de FenetreGraph
         fenetreGraph.addNextButtonListener(new ActionListener() {
+            /**
+            * permet de passer au graph precedent
+            * @author tom
+            * @param e l'événement de clic
+            */
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentGraphIndex < graphes.size() - 1) {
@@ -631,13 +705,32 @@ public class Fenetre extends JFrame {
             }
         });
     }
-
+    
+    /**
+    * Renvoie le composant JTextPane utilisé pour afficher les informations dans la console.
+    * 
+    * @author tom
+    */
     public static JTextPane getTxtConsole() {
         return txtConsole;
     }
     
+    /**
+    * Renvoie le graphique courant.
+    * 
+    * @author tom
+    */
     public Graph getGraphCourant(){
         return graphes.get(currentGraphIndex);
+    }
+    
+    /**
+    * Renvoie le dernier fichier de mise à jour des collisions.
+    * 
+    * @author tom
+    */
+    public String getListLastColoFileUpdates() {
+        return listLastColoFileUpdates.getLast();
     }
 }
 

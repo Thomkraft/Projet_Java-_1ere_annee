@@ -4,7 +4,6 @@
  */
 package File;
 
-import Stockage.StockageAeroports;
 import Stockage.Vols;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -13,7 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
         
 /**
  *Class OuvrirCsv pour ouvrir un fichier .csv d'une liste de vols
@@ -68,7 +66,7 @@ public class OuvrirCsv {
                     int minutesDepart = Integer.parseInt(ligne[4]);
                     int duree = Integer.parseInt(ligne[5]);
 
-                    Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree);
+                    Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree, -1);
                     listeVols.add(vol);
                     nbLigne++;
                 } catch (NumberFormatException ex){

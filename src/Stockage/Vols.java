@@ -18,6 +18,7 @@ public class Vols {
     private int durrée;
     private String aéroportDépart;
     private String aéroportArrivée;
+    private int niveau;
 
     /**
      * Constructeur de la classe Vols.
@@ -29,13 +30,14 @@ public class Vols {
      * @param minutesDépart Les minutes de départ
      * @param durrée La durée du vol en minutes
      */
-    public Vols(String nomVol, String aéroportDépart, String aéroportArrivée, int heureDépart, int minutesDépart, int durrée) {
+    public Vols(String nomVol, String aéroportDépart, String aéroportArrivée, int heureDépart, int minutesDépart, int durrée, int niveau) {
         this.nomVol = nomVol;
         this.heureDépart = heureDépart;
         this.minutesDépart = minutesDépart;
         this.durrée = durrée;
         this.aéroportDépart = aéroportDépart;
         this.aéroportArrivée = aéroportArrivée;
+        this.niveau = niveau;
         nbVols++;
     }
     
@@ -54,7 +56,9 @@ public class Vols {
                 ", aeroportArrivee='" + aéroportArrivée + '\'' +
                 ", heureDepart=" + heureDépart +
                 ", minutesDepart=" + minutesDépart +
-                ", duree=" + durrée;
+                ", duree=" + durrée + '\'' +
+                "niveau=" + niveau;
+        
     }
 
     /**
@@ -132,6 +136,26 @@ public class Vols {
      */
     public static void setNbVols(int nbVols) {
         Vols.nbVols = nbVols;
+    }
+    
+    /**
+     * Retourne le niveau du vol
+     *
+     * @author tom
+     */
+    public int getNiveau() {
+        return niveau;
+    }
+
+    /**
+     * Définit le niveau du vol.
+     *
+     * @author tom
+     * 
+     * @param niveau Le niveau du vols
+     */
+    public void setNiveau(int niveau) {
+        this.niveau = niveau;
     }
     
     

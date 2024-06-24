@@ -2,7 +2,6 @@ package application;
 
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.painter.Painter;
-
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -11,17 +10,31 @@ import java.util.List;
 import org.jxmapviewer.JXMapViewer;
 
 /**
- *
+ * La classe FlightPainter est un Painter utilisé pour dessiner les trajets de vol
+ * sur une carte JXMapViewer. Elle utilise une liste de FlightPath pour stocker
+ * les trajets et fournit une méthode paint pour dessiner ces trajets sur la carte.
+ * 
  * @author tom
- *  
+ * @version 1.0
  */
 public class FlightPainter {
     private List<FlightPath> flightPaths;
 
+    /**
+     * Constructeur par défaut qui initialise la liste des trajets de vol.
+     * @author tom
+     */
     public FlightPainter() {
         flightPaths = new ArrayList<>();
     }
 
+    /**
+     * Définit le trajet de vol entre deux positions géographiques (départ et arrivée).
+     * Efface tous les trajets précédents et ajoute un nouveau trajet.
+     * @author tom
+     * @param start La position géographique de départ du vol
+     * @param end La position géographique d'arrivée du vol
+     */
     public void setFlight(GeoPosition start, GeoPosition end) {
         flightPaths.clear(); // Effacer les trajets précédents
 
@@ -29,10 +42,20 @@ public class FlightPainter {
         flightPaths.add(flightPath);
     }
 
+    /**
+     * Récupère la liste des trajets de vol actuellement définis.
+     * @author tom
+     * @return Une liste de FlightPath représentant les trajets de vol
+     */
     public List<FlightPath> getFlightPaths() {
         return flightPaths;
     }
 
+    /**
+     * Retourne un Painter<JXMapViewer> utilisé pour dessiner les trajets de vol sur la carte.
+     * @author tom
+     * @return Un Painter<JXMapViewer> pour dessiner les trajets de vol
+     */
     public Painter<JXMapViewer> getPainter() {
         return new Painter<JXMapViewer>() {
             @Override

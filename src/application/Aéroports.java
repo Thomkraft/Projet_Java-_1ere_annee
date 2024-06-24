@@ -7,12 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jxmapviewer.viewer.GeoPosition;
 
+
 /**
- *
- * @author tom
+ * La classe Aéroports contient des méthodes pour la manipulation des aéroports.
+ * Elle permet de créer des points de passage (waypoints), de trouver la position d'un aéroport par son nom,
+ * et de lire les noms des aéroports à partir d'un fichier spécifié.
+ * Les coordonnées des aéroports sont parsées à partir des degrés, minutes, secondes et direction.
  * 
+ * @author tom
+ * @version 1.0
  */
 public class Aéroports {
+    /**
+     * Crée une liste de points de passage (waypoints) à partir du fichier spécifié.
+     * Chaque waypoint contient une position géographique (latitude, longitude) et un nom d'aéroport.
+     * @author tom
+     * @param filePath Le chemin vers le fichier contenant les données des aéroports
+     * @return Une liste de WaypointWithName contenant les positions et noms des aéroports
+     */
     public static List<WaypointWithName> createWaypoints(String filePath) {
         List<WaypointWithName> waypoints = new ArrayList<>();
 
@@ -35,6 +47,15 @@ public class Aéroports {
         return waypoints;
     }
 
+    /**
+     * Parse les coordonnées géographiques (latitude ou longitude) à partir des degrés, minutes, secondes et direction.
+     * @author tom
+     * @param degreeStr Chaîne représentant les degrés
+     * @param minuteStr Chaîne représentant les minutes
+     * @param secondStr Chaîne représentant les secondes
+     * @param direction Direction (N, S, E, O) indiquant si la latitude ou longitude est positive ou négative
+     * @return La coordonnée géographique parsée sous forme de double
+     */
     private static double parseCoordinate(String degreeStr, String minuteStr, String secondStr, String direction) {
         double degrees = Double.parseDouble(degreeStr);
         double minutes = Double.parseDouble(minuteStr);
@@ -46,6 +67,13 @@ public class Aéroports {
         return coordinate;
     }
     
+    /**
+     * Recherche et retourne la position géographique d'un aéroport par son nom dans la liste de waypoints spécifiée.
+     * @author tom
+     * @param airportName Le nom de l'aéroport à rechercher
+     * @param waypoints La liste de WaypointWithName contenant les positions et noms des aéroports
+     * @return La position géographique (GeoPosition) de l'aéroport, ou null si non trouvé
+     */
     public static GeoPosition findAirportPositionByName(String airportName, List<WaypointWithName> waypoints) {
         for (WaypointWithName waypoint : waypoints) {
             if (waypoint.getName().equalsIgnoreCase(airportName)) {
@@ -55,6 +83,12 @@ public class Aéroports {
         return null;
     }
     
+    /**
+     * Lit les noms des aéroports à partir du fichier spécifié et les retourne sous forme de liste de chaînes.
+     * @author tom
+     * @param cheminFichier Le chemin vers le fichier contenant les noms des aéroports
+     * @return Une liste de chaînes contenant les noms des aéroports lus depuis le fichier
+     */
     public static List<String> lireNomsAeroports(String cheminFichier) {
         List<String> nomsAeroports = new ArrayList<>();
 

@@ -1,72 +1,69 @@
 package Interface;
 
-import Stockage.StockageAeroports;
+import Stockage.Vols;
+import application.Aéroports;
 import application.FlightPainter;
+import application.WaypointWithName;
+import org.graphstream.graph.Graph;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.WaypointPainter;
-import org.jxmapviewer.input.PanMouseInputListener;
-import org.jxmapviewer.input.ZoomMouseWheelListenerCenter;
-import org.jxmapviewer.painter.CompoundPainter;
 
-import javax.swing.JFrame;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Set;
-
-import application.Aéroports;
-import application.WaypointWithName;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import org.graphstream.graph.Graph;
+import java.util.List;
+import java.util.Set;
+import org.jxmapviewer.painter.CompoundPainter;
 
-/**
- *
- * @author tom
- * 
- */
 public class Carte extends JFrame {
-    private String filePath;
-    private Graph graph;
     private List<String> listeAeroport = new ArrayList<>();
     private JXMapViewer mapViewer;
     private FlightPainter flightPainter;
     private List<WaypointWithName> waypoints;
     private JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
     private JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
-    
-    public Carte(String filePath, Graph graph) {
-        init(filePath, graph);
+    private List<Vols> listeVol = new ArrayList<>();
+
+    /**
+     * Constructeur de la classe Carte.
+     * Initialise la carte avec les aéroports, les vols et les options de visualisation.
+     *
+     * @param cheminAeroports Chemin vers le fichier des aéroports
+     * @param graph           Le graphique des vols à visualiser
+     * @param cheminTxtColo   Chemin vers le fichier de texte coloré
+     * @param listeVolsFichier Liste des listes de vols à afficher
+     */
+    public Carte(String cheminAeroports, Graph graph, String cheminTxtColo, List<Vols> listeVol) {
+        this.listeVol = listeVol;
+        init(cheminAeroports, graph, cheminTxtColo);
     }
 
-    private void init(String filePath, Graph graph) {
+    private void init(String cheminAeroports, Graph graph, String cheminTxtColo) {
         mapViewer = new JXMapViewer();
         flightPainter = new FlightPainter();
-        listeAeroport = Aéroports.lireNomsAeroports(filePath);
-        
-        //Menu
+        listeAeroport = Aéroports.lireNomsAeroports(cheminAeroports);
+
+        // Menu
         JMenu Outils = new JMenu("Outils");
         Outils.add(item1);
         Outils.add(item2);
         JMenuBar jmb = new JMenuBar();
         jmb.add(Outils);
         this.setJMenuBar(jmb);
-        
 
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
 
         // Récupérer les waypoints depuis Aéroports
-        waypoints = Aéroports.createWaypoints(filePath);
+        waypoints = Aéroports.createWaypoints(cheminAeroports);
 
         // Créer un WaypointPainter et ajouter les waypoints
         WaypointPainter<WaypointWithName> waypointPainter = new WaypointPainter<>();
@@ -77,31 +74,6 @@ public class Carte extends JFrame {
         mapViewer.setOverlayPainter(compoundPainter);
 
         // Ajouter des écouteurs pour la navigation à la souris
-        PanMouseInputListener panMouseInputListener = new PanMouseInputListener(mapViewer);
-        mapViewer.addMouseListener(panMouseInputListener);
-        mapViewer.addMouseMotionListener(panMouseInputListener);
-        mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCenter(mapViewer));
-        
-        // Ecouteurs Menu
-        item1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, filePath);
-                visualisationFrame.setVisible(true);
-                visualisationFrame.visualiserNiveauxParAeroport((String) visualisationFrame.getAeroportComboBox().getSelectedItem());
-            }
-        });
-        
-        item2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, filePath);
-                visualisationFrame.setVisible(true);
-                visualisationFrame.visualiserVolsParNiveau((int) visualisationFrame.getNiveauComboBox().getSelectedItem());
-            }
-        });
-
-        // Écouteur pour mettre à jour la position courante lors du relâchement de la souris
         mapViewer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -113,8 +85,38 @@ public class Carte extends JFrame {
         getContentPane().add(mapViewer);
         setSize(1000, 800);
         setLocationRelativeTo(null);
+
+        /**
+         * Gère l'action de l'utilisateur pour visualiser les niveaux de vol par aéroport.
+         * Crée et affiche une nouvelle fenêtre de visualisation avec une combobox pour choisir un aéroport.
+         */
+        item1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, cheminAeroports, cheminTxtColo, listeVol);
+                visualisationFrame.setVisible(true);
+                visualisationFrame.afficherTousLesVols();
+            }
+        });
+
+        /**
+         * Gère l'action de l'utilisateur pour visualiser les vols par niveau.
+         * Crée et affiche une nouvelle fenêtre de visualisation avec une combobox pour choisir un niveau de vol.
+         */
+        item2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, cheminAeroports, cheminTxtColo, listeVol);
+                visualisationFrame.setVisible(true);
+            }
+        });
     }
 
+    /**
+     * Affiche la carte avec un vol prédéfini entre deux positions géographiques.
+     * Utilise un FlightPainter pour dessiner le vol et centre la carte sur la trajectoire.
+     * Ajuste également le niveau de zoom pour afficher correctement les points.
+     */
     public void afficherCarteAvecVolPredefini() {
         GeoPosition start = new GeoPosition(48.856613, 2.352222); // Paris
         GeoPosition end = new GeoPosition(45.75, 4.85); // Lyon
@@ -144,10 +146,9 @@ public class Carte extends JFrame {
         double by = Math.cos(lat2) * Math.sin(lon2 - lon1);
 
         double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2),
-                                Math.sqrt((Math.cos(lat1) + bx) * (Math.cos(lat1) + bx) + by * by));
+                Math.sqrt((Math.cos(lat1) + bx) * (Math.cos(lat1) + bx) + by * by));
         double lon3 = lon1 + Math.atan2(by, Math.cos(lat1) + bx);
 
         return new GeoPosition(Math.toDegrees(lat3), Math.toDegrees(lon3));
     }
 }
- 

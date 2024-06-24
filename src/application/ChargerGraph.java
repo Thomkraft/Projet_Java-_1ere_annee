@@ -9,15 +9,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.graphstream.algorithm.ConnectedComponents;
-import org.graphstream.algorithm.Toolkit;
 
 /**
- *
- * @author tom
+ * La classe ChargerGraph permet de charger plusieurs graphes à partir de fichiers spécifiés,
+ * d'ajouter des attributs aux graphes tels que le nombre maximal de sommets, le nombre de sommets,
+ * le nombre d'arêtes, et de les colorier en utilisant l'algorithme DSatur.
+ * Elle gère également les erreurs liées à la lecture des fichiers ou à l'ajout des arêtes.
  * 
+ * @author tom
+ * @version 1.0
  */
 public class ChargerGraph {
+    /**
+     * Charge une liste de graphes à partir de fichiers spécifiés.
+     * Pour chaque fichier, un graphe est créé et des attributs tels que le nombre maximal de sommets,
+     * le nombre de sommets, le nombre d'arêtes sont ajoutés au graphe. Ensuite, les graphes sont coloriés
+     * en utilisant l'algorithme DSatur.
+     * @author tom/Alec
+     * @param noms_fichiers La liste des chemins vers les fichiers contenant les données des graphes
+     * @return Une liste de graphes (instances de Graph) chargés et coloriés
+     */
     public static List<Graph> charger_graphes(List<String> noms_fichiers) {
         List<Graph> graphes = new ArrayList<>();
 
