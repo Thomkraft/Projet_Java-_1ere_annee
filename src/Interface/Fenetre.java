@@ -322,7 +322,6 @@ public class Fenetre extends JFrame {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                Graph graph = getGraphCourant();
                 String cheminTxtColo = getListLastColoFileUpdates();
                 SwingUtilities.invokeLater(() -> {
                     
@@ -337,9 +336,12 @@ public class Fenetre extends JFrame {
                         JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-
+                    System.out.println("Vols Chargés :");
+                    for(Vols vol : listeVol) {
+                        System.out.println(vol);
+                    }
                     // Utiliser le fichier d'aéroport chargé pour afficher la carte
-                    Carte carte = new Carte(fichierAeroport,graph,cheminTxtColo,listeVol);
+                    Carte carte = new Carte(fichierAeroport,cheminTxtColo,listeVol);
                     carte.setVisible(true);
                     carte.afficherCarteAvecVolPredefini();
                 });
@@ -417,6 +419,7 @@ public class Fenetre extends JFrame {
                             throw new Exception();
                         }
 
+
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (CsvValidationException ex) {
@@ -470,9 +473,9 @@ public class Fenetre extends JFrame {
                     System.out.println("nombre de vols : " + Vols.nbVols);
                     */
                     listeColisionVol.clear();
-                    listeVol.clear();
                     colision.setNbColisions(0);
                     Vols.setNbVols(0);
+                    
                     
                 }
 

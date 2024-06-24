@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jxmapviewer.viewer.GeoPosition;
 
-
 /**
  * La classe Aéroports contient des méthodes pour la manipulation des aéroports.
  * Elle permet de créer des points de passage (waypoints), de trouver la position d'un aéroport par son nom,
@@ -18,10 +17,11 @@ import org.jxmapviewer.viewer.GeoPosition;
  * @version 1.0
  */
 public class Aéroports {
+
     /**
      * Crée une liste de points de passage (waypoints) à partir du fichier spécifié.
      * Chaque waypoint contient une position géographique (latitude, longitude) et un nom d'aéroport.
-     * @author tom
+     * 
      * @param filePath Le chemin vers le fichier contenant les données des aéroports
      * @return Une liste de WaypointWithName contenant les positions et noms des aéroports
      */
@@ -49,7 +49,7 @@ public class Aéroports {
 
     /**
      * Parse les coordonnées géographiques (latitude ou longitude) à partir des degrés, minutes, secondes et direction.
-     * @author tom
+     * 
      * @param degreeStr Chaîne représentant les degrés
      * @param minuteStr Chaîne représentant les minutes
      * @param secondStr Chaîne représentant les secondes
@@ -69,7 +69,7 @@ public class Aéroports {
     
     /**
      * Recherche et retourne la position géographique d'un aéroport par son nom dans la liste de waypoints spécifiée.
-     * @author tom
+     * 
      * @param airportName Le nom de l'aéroport à rechercher
      * @param waypoints La liste de WaypointWithName contenant les positions et noms des aéroports
      * @return La position géographique (GeoPosition) de l'aéroport, ou null si non trouvé
@@ -84,27 +84,29 @@ public class Aéroports {
     }
     
     /**
-     * Lit les noms des aéroports à partir du fichier spécifié et les retourne sous forme de liste de chaînes.
-     * @author tom
-     * @param cheminFichier Le chemin vers le fichier contenant les noms des aéroports
-     * @return Une liste de chaînes contenant les noms des aéroports lus depuis le fichier
+     * Lit les noms et les codes des aéroports à partir du fichier spécifié et les retourne sous forme de tableau à double dimension.
+     * 
+     * @param cheminFichier Le chemin vers le fichier contenant les noms et les codes des aéroports
+     * @return Un tableau à double dimension contenant les codes et les noms des aéroports
      */
-    public static List<String> lireNomsAeroports(String cheminFichier) {
-        List<String> nomsAeroports = new ArrayList<>();
+    public static List<String[]> lireAeroports(String cheminFichier) {
+        List<String[]> listeAeroport = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(cheminFichier))) {
             String ligne;
             while ((ligne = br.readLine()) != null) {
                 String[] parties = ligne.split(";");
                 if (parties.length >= 2) {
+                    String codeAeroport = parties[0];
                     String nomAeroport = parties[1];
-                    nomsAeroports.add(nomAeroport);
+                    listeAeroport.add(new String[] { codeAeroport, nomAeroport });
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return nomsAeroports;
+        return listeAeroport;
     }
+
 }

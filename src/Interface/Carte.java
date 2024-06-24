@@ -4,7 +4,6 @@ import Stockage.Vols;
 import application.Aéroports;
 import application.FlightPainter;
 import application.WaypointWithName;
-import org.graphstream.graph.Graph;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.viewer.DefaultTileFactory;
@@ -17,38 +16,45 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.jxmapviewer.painter.CompoundPainter;
 
+/**
+ * Classe représentant une fenêtre affichant une carte avec des aéroports et des vols.
+ * Utilise JXMapViewer pour la visualisation cartographique et permet de visualiser les vols
+ * en fonction des aéroports et des niveaux sélectionnés.
+ */
 public class Carte extends JFrame {
-    private List<String> listeAeroport = new ArrayList<>();
     private JXMapViewer mapViewer;
     private FlightPainter flightPainter;
     private List<WaypointWithName> waypoints;
     private JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
     private JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
-    private List<Vols> listeVol = new ArrayList<>();
+    private List<Vols> listeVol;
 
     /**
      * Constructeur de la classe Carte.
      * Initialise la carte avec les aéroports, les vols et les options de visualisation.
      *
-     * @param cheminAeroports Chemin vers le fichier des aéroports
-     * @param graph           Le graphique des vols à visualiser
-     * @param cheminTxtColo   Chemin vers le fichier de texte coloré
-     * @param listeVolsFichier Liste des listes de vols à afficher
+     * @param cheminAeroports Chemin vers le fichier des aéroports.
+     * @param cheminTxtColo   Chemin vers le fichier de texte coloré.
+     * @param listeVol Liste des vols à afficher.
      */
-    public Carte(String cheminAeroports, Graph graph, String cheminTxtColo, List<Vols> listeVol) {
+    public Carte(String cheminAeroports, String cheminTxtColo, List<Vols> listeVol) {
         this.listeVol = listeVol;
-        init(cheminAeroports, graph, cheminTxtColo);
+        init(cheminAeroports, cheminTxtColo);
     }
 
-    private void init(String cheminAeroports, Graph graph, String cheminTxtColo) {
+    /**
+     * Initialise la carte avec les composants graphiques et les écouteurs nécessaires.
+     *
+     * @param cheminAeroports Chemin vers le fichier des aéroports.
+     * @param cheminTxtColo   Chemin vers le fichier de texte coloré.
+     */
+    private void init(String cheminAeroports, String cheminTxtColo) {
         mapViewer = new JXMapViewer();
         flightPainter = new FlightPainter();
-        listeAeroport = Aéroports.lireNomsAeroports(cheminAeroports);
 
         // Menu
         JMenu Outils = new JMenu("Outils");
@@ -70,14 +76,13 @@ public class Carte extends JFrame {
         waypointPainter.setWaypoints(Set.copyOf(waypoints));
 
         // Créer un CompoundPainter avec le waypointPainter et le painter des trajectoires de vol
-        CompoundPainter<JXMapViewer> compoundPainter = new CompoundPainter<>(waypointPainter, flightPainter.getPainter());
-        mapViewer.setOverlayPainter(compoundPainter);
+        mapViewer.setOverlayPainter(new CompoundPainter<>(waypointPainter, flightPainter.getPainter()));
 
         // Ajouter des écouteurs pour la navigation à la souris
         mapViewer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                GeoPosition currentPosition = mapViewer.getCenterPosition();
+                GeoPosition currentPosition = mapViewer.convertPointToGeoPosition(e.getPoint());
                 mapViewer.setAddressLocation(currentPosition);
             }
         });
@@ -86,27 +91,22 @@ public class Carte extends JFrame {
         setSize(1000, 800);
         setLocationRelativeTo(null);
 
-        /**
-         * Gère l'action de l'utilisateur pour visualiser les niveaux de vol par aéroport.
-         * Crée et affiche une nouvelle fenêtre de visualisation avec une combobox pour choisir un aéroport.
-         */
+        // Action listener pour item1 (Aeroport -> niveau des vols)
         item1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, cheminAeroports, cheminTxtColo, listeVol);
+                int cmd = 1;
+                Visualisation visualisationFrame = new Visualisation(Aéroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
                 visualisationFrame.setVisible(true);
-                visualisationFrame.afficherTousLesVols();
             }
         });
 
-        /**
-         * Gère l'action de l'utilisateur pour visualiser les vols par niveau.
-         * Crée et affiche une nouvelle fenêtre de visualisation avec une combobox pour choisir un niveau de vol.
-         */
+        // Action listener pour item2 (niveau -> Lister les vols)
         item2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, cheminAeroports, cheminTxtColo, listeVol);
+                int cmd = 2;
+                Visualisation visualisationFrame = new Visualisation(Aéroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
                 visualisationFrame.setVisible(true);
             }
         });
@@ -136,6 +136,13 @@ public class Carte extends JFrame {
         mapViewer.repaint();
     }
 
+    /**
+     * Calcule le centre géographique entre deux positions géographiques.
+     *
+     * @param start Position géographique de départ.
+     * @param end   Position géographique de fin.
+     * @return Le centre géographique entre les deux positions.
+     */
     private GeoPosition calculateCenter(GeoPosition start, GeoPosition end) {
         double lat1 = Math.toRadians(start.getLatitude());
         double lon1 = Math.toRadians(start.getLongitude());

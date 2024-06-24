@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class OuvrirCsv {
 
+    private static int nbLignes;
     private List<Vols> listeVols;
 
     /**
@@ -46,14 +47,14 @@ public class OuvrirCsv {
      */
     public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException, Exception{
         try {
-            int nbLigne = 0;
+            nbLignes = 0;
             CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
             String[] ligne;
-
-            String[] separateurFichier = fichierCSV.split("\\\\/.");
-            if (separateurFichier[separateurFichier.length-1].equals("txt")){
+            
+            if (fichierCSV.contains(".txt")){
                 throw new IllegalArgumentException("le fichier de vol" + fichierCSV + " n'est pas un .csv");
             } 
+
             while ((ligne = lecteur.readNext()) != null){
                 try {
                     if (ligne[0].length()> 15) {
@@ -68,12 +69,12 @@ public class OuvrirCsv {
 
                     Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree, -1);
                     listeVols.add(vol);
-                    nbLigne++;
+                    nbLignes++;
                 } catch (NumberFormatException ex){
                     continue;
                 }
                 
-                if (nbLigne == 0){
+                if (nbLignes == 0){
                     throw new Exception("Mauvais format pour toutes les lignes du fichier CSV !");
                 }
 
@@ -84,11 +85,17 @@ public class OuvrirCsv {
          
         } catch (Exception ex){
             System.err.println("Erreur : " + ex.getMessage());
+            return null;
         }
         
       
         return listeVols;
         
     }
+
+    public static int getNbLignes() {
+        return nbLignes;
+    }
+    
 
 }
