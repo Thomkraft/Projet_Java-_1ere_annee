@@ -50,8 +50,7 @@ public class OuvrirCsv {
             CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
             String[] ligne;
 
-            String[] separateurFichier = fichierCSV.split("\\\\/.");
-            if (separateurFichier[separateurFichier.length-1].equals("txt")){
+            if (fichierCSV.contains(".txt")){
                 throw new IllegalArgumentException("le fichier de vol" + fichierCSV + " n'est pas un .csv");
             } 
             while ((ligne = lecteur.readNext()) != null){
@@ -75,6 +74,7 @@ public class OuvrirCsv {
                 
                 if (nbLigne == 0){
                     throw new Exception("Mauvais format pour toutes les lignes du fichier CSV !");
+                   
                 }
 
             }
@@ -84,6 +84,7 @@ public class OuvrirCsv {
          
         } catch (Exception ex){
             System.err.println("Erreur : " + ex.getMessage());
+            return null;
         }
         
       
