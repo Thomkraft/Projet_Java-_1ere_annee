@@ -50,7 +50,6 @@ public class OuvrirCsv {
             nbLignes = 0;
             CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
             String[] ligne;
-            
             if (fichierCSV.contains(".txt")){
                 throw new IllegalArgumentException("le fichier de vol" + fichierCSV + " n'est pas un .csv");
             } 
@@ -76,6 +75,7 @@ public class OuvrirCsv {
                 
                 if (nbLignes == 0){
                     throw new Exception("Mauvais format pour toutes les lignes du fichier CSV !");
+                   
                 }
 
             }

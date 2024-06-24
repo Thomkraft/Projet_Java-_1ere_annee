@@ -426,7 +426,7 @@ public class Fenetre extends JFrame {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (Exception ex) {
                         String[] separation = file.split("\\\\");
-                        listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                            listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         //txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         continue;
                     }
