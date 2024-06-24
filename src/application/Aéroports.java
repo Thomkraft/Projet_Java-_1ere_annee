@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jxmapviewer.viewer.GeoPosition;
 
+/**
+ *
+ * @author tom
+ * 
+ */
 public class Aéroports {
     public static List<WaypointWithName> createWaypoints(String filePath) {
         List<WaypointWithName> waypoints = new ArrayList<>();
@@ -48,5 +53,24 @@ public class Aéroports {
             }
         }
         return null;
+    }
+    
+    public static List<String> lireNomsAeroports(String cheminFichier) {
+        List<String> nomsAeroports = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(cheminFichier))) {
+            String ligne;
+            while ((ligne = br.readLine()) != null) {
+                String[] parties = ligne.split(";");
+                if (parties.length >= 2) {
+                    String nomAeroport = parties[1];
+                    nomsAeroports.add(nomAeroport);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return nomsAeroports;
     }
 }

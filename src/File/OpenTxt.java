@@ -4,7 +4,7 @@
  */
 package File;
 
-import Stockage.Aeroports;
+import Stockage.StockageAeroports;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import java.io.BufferedReader;
@@ -15,19 +15,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class OpenTxt pour ouvrir les fichiers texte d'aéroports 
+ * 
  * @author thoma
  */
 public class OpenTxt {
     
-    private List<Aeroports> listeAeroports;
+    private List<StockageAeroports> listeAeroports;
     
+    /**
+     * Constructeur pour la class OpenTxt qui initialise la liste d'aéroports
+     */
     public OpenTxt(){
         
         listeAeroports = new ArrayList<>();
     }
     
-    public List<Aeroports> LectureTxtAéroports(String fichierTXT) throws FileNotFoundException, IOException, CsvValidationException{
+    /**
+     * @author thomas
+     * 
+     * @param fichierTXT contient le chemin du fichier txt a lire
+     * @return Renvoie une ArrayList contenant tous les aéroports chargés
+     * @throws FileNotFoundException si le fichier n'est pas trouvé
+     * @throws IOException si erreure d'entrée sortie
+     * @throws CsvValidationException
+     */
+    public List<StockageAeroports> LectureTxtAéroports(String fichierTXT) throws FileNotFoundException, IOException, CsvValidationException{
         
         try {
             BufferedReader br = new BufferedReader(new FileReader(fichierTXT));
@@ -45,7 +58,7 @@ public class OpenTxt {
                 String longitude = separation[6] + ";" + separation[7] + ";" + separation[8] + ";"  + separation[9];
 
 
-                Aeroports aeroport = new Aeroports(codeAeroport, lieu, latitude, longitude);
+                StockageAeroports aeroport = new StockageAeroports(codeAeroport, lieu, latitude, longitude);
                 listeAeroports.add(aeroport);
 
             }

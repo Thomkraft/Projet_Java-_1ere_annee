@@ -5,6 +5,11 @@ import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 
+/**
+ *
+ * @author alec
+ * 
+ */
 public class TriSommets {
     private final Graph graph;
     private  final ArrayList<Node> listeSommets;

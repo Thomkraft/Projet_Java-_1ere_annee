@@ -1,5 +1,6 @@
 package Interface;
 
+import Stockage.StockageAeroports;
 import application.FlightPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -19,25 +20,37 @@ import java.util.Set;
 
 import application.Aéroports;
 import application.WaypointWithName;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import org.graphstream.graph.Graph;
 
+/**
+ *
+ * @author tom
+ * 
+ */
 public class Carte extends JFrame {
-
+    private String filePath;
+    private Graph graph;
+    private List<String> listeAeroport = new ArrayList<>();
     private JXMapViewer mapViewer;
     private FlightPainter flightPainter;
     private List<WaypointWithName> waypoints;
     private JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
     private JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
     
-    public Carte(String filePath) {
-        init(filePath);
+    public Carte(String filePath, Graph graph) {
+        init(filePath, graph);
     }
 
-    private void init(String filePath) {
+    private void init(String filePath, Graph graph) {
         mapViewer = new JXMapViewer();
         flightPainter = new FlightPainter();
+        listeAeroport = Aéroports.lireNomsAeroports(filePath);
         
         //Menu
         JMenu Outils = new JMenu("Outils");
@@ -68,6 +81,25 @@ public class Carte extends JFrame {
         mapViewer.addMouseListener(panMouseInputListener);
         mapViewer.addMouseMotionListener(panMouseInputListener);
         mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCenter(mapViewer));
+        
+        // Ecouteurs Menu
+        item1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, filePath);
+                visualisationFrame.setVisible(true);
+                visualisationFrame.visualiserNiveauxParAeroport((String) visualisationFrame.getAeroportComboBox().getSelectedItem());
+            }
+        });
+        
+        item2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Visualisation visualisationFrame = new Visualisation(graph, listeAeroport, filePath);
+                visualisationFrame.setVisible(true);
+                visualisationFrame.visualiserVolsParNiveau((int) visualisationFrame.getNiveauComboBox().getSelectedItem());
+            }
+        });
 
         // Écouteur pour mettre à jour la position courante lors du relâchement de la souris
         mapViewer.addMouseListener(new MouseAdapter() {
@@ -118,3 +150,4 @@ public class Carte extends JFrame {
         return new GeoPosition(Math.toDegrees(lat3), Math.toDegrees(lon3));
     }
 }
+ 

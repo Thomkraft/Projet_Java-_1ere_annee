@@ -3,6 +3,12 @@ package application;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
 
+
+/**
+ *
+ * @author tom
+ * 
+ */
 public class WaypointWithName extends DefaultWaypoint {
     private final String name;
 

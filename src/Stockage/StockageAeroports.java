@@ -5,17 +5,27 @@
 package Stockage;
 
 /**
- *
- * @author thoma
+ * Classe représentant un aéroport avec son code, son lieu et ses coordonnées géographiques.
  * 
+ * @author thomas
  */
-public class Aeroports {
+public class StockageAeroports {
     private String codeAeroport;
     private String lieu;
     private double x;
     private double y;
     
-    public Aeroports(String codeAeroport, String lieu, String latitude, String longitude) {
+    /**
+     * Constructeur de la classe StockageAeroports.
+     *
+     * @author thomas
+     * 
+     * @param codeAeroport Le code de l'aéroport
+     * @param lieu Le lieu de l'aéroport
+     * @param latitude La latitude de l'aéroport
+     * @param longitude La longitude de l'aéroport
+     */
+    public StockageAeroports(String codeAeroport, String lieu, String latitude, String longitude) {
         this.codeAeroport = codeAeroport;
         this.lieu = lieu;
         
@@ -25,11 +35,23 @@ public class Aeroports {
         this.x = (6371 * Math.cos(valeurLatitude) * Math.sin(valeurLongitude));
         this.y = (6371 * Math.cos(valeurLatitude) * Math.cos(valeurLongitude));
     }
-
-    public Aeroports() {
+    
+    /**
+     * Constructeur par défaut de la classe StockageAeroports.
+     * 
+     * @author thomas
+     */
+    public StockageAeroports() {
         
     }
     
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères de l'aéroport
+     *
+     * @author thomas
+     * 
+     * @return Une chaîne de caractères représentant l'aéroport
+     */
     @Override
     public String toString() {
         return "Aeroport :" +
@@ -39,18 +61,46 @@ public class Aeroports {
                 ", coord y =" + y;
     }
 
+    /**
+     * Retourne le code de l'aéroport.
+     *
+     * @author thomas
+     * 
+     * @return Le code de l'aéroport
+     */
     public String getCodeAeroport() {
         return codeAeroport;
     }
 
+    /**
+     * Retourne la coordonnée x de l'aéroport.
+     *
+     * @author thomas
+     * 
+     * @return La coordonnée x de l'aéroport
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Retourne la coordonnée y de l'aéroport.
+     *
+     * @author thomas
+     * 
+     * @return La coordonnée y de l'aéroport
+     */
     public double getY() {
         return y;
     }
     
+    /**
+     * Retourne le lieu de l'aéroport.
+     *
+     * @author thomas
+     * 
+     * @return Le lieu de l'aéroport
+     */
     public String getNom() {
         return lieu;
     }
@@ -67,5 +117,6 @@ public class Aeroports {
         
         return (coef*(Double.parseDouble(valueSplit[0]) + Double.parseDouble(valueSplit[1])/60 + Double.parseDouble(valueSplit[2])/3600));
     }
+    
     
 }

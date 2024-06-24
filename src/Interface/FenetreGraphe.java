@@ -10,6 +10,11 @@ import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
 
+/**
+ *
+ * @author tom,alec
+ * 
+ */
 public class FenetreGraphe extends JInternalFrame {
     private Viewer viewer;
     private DefaultView view;

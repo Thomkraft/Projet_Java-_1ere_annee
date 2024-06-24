@@ -1,39 +1,80 @@
 package Interface;
 
-import Stockage.Aeroports;
-import Stockage.Vols;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author tom
+ *  
  */
 public class Visualisation extends JFrame {
     private JComboBox<String> aeroportComboBox;
     private JComboBox<Integer> niveauComboBox;
     private JPanel visualisationPanel;
     private Graph graph;
+    private JTable volTable;
+    private DefaultTableModel tableModel;
 
-    public Visualisation(Graph graph, List<Aeroports> listeAeroports, int kMax) {
+    public Visualisation(Graph graph, List<String> listeAeroport, String filePath) {
         this.graph = graph;
         setTitle("Visualisation des Niveaux de Vol");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        initUI(listeAeroports, kMax);
+        
+        initUI(listeAeroport);
+        lireFichierSommets(filePath);
+        
+        aeroportComboBox.addActionListener(e -> {
+            String selectedAeroport = (String) aeroportComboBox.getSelectedItem();
+            visualiserNiveauxParAeroport(selectedAeroport);
+        });
+
+        niveauComboBox.addActionListener(e -> {
+            int selectedNiveau = (int) niveauComboBox.getSelectedItem();
+            visualiserVolsParNiveau(selectedNiveau);
+        });
     }
 
-    private void initUI(List<Aeroports> listeAeroports, int kMax) {
+    public JComboBox<String> getAeroportComboBox() {
+        return aeroportComboBox;
+    }
+
+    public JComboBox<Integer> getNiveauComboBox() {
+        return niveauComboBox;
+    }
+
+    public JPanel getVisualisationPanel() {
+        return visualisationPanel;
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    private void initUI(List<String> listeAeroports) {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        visualisationPanel = new JPanel();
+
+        // Table setup
+        String[] columnNames = {"Vol", "Aéroport départ", "Niveau"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        volTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(volTable);
+
+        visualisationPanel = new JPanel(new BorderLayout());
         visualisationPanel.setBackground(Color.WHITE);
+        visualisationPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Panel pour les contrôles
         JPanel controlPanel = new JPanel(new GridLayout(2, 2, 10, 10));
@@ -41,98 +82,82 @@ public class Visualisation extends JFrame {
 
         JLabel aeroportLabel = new JLabel("Sélectionner un aéroport:");
         aeroportComboBox = new JComboBox<>();
-        for (Aeroports aeroport : listeAeroports) {
-            aeroportComboBox.addItem(aeroport.getNom());
+        for (String aeroport : listeAeroports) {
+            aeroportComboBox.addItem(aeroport);
         }
-        JButton btnVisualiserAeroport = new JButton("Visualiser");
 
         JLabel niveauLabel = new JLabel("Sélectionner un niveau:");
         niveauComboBox = new JComboBox<>();
-        for (int i = 1; i <= kMax; i++) {
-            niveauComboBox.addItem(i);
-        }
-        JButton btnVisualiserNiveau = new JButton("Visualiser");
 
         controlPanel.add(aeroportLabel);
         controlPanel.add(aeroportComboBox);
-        controlPanel.add(btnVisualiserAeroport);
         controlPanel.add(niveauLabel);
         controlPanel.add(niveauComboBox);
-        controlPanel.add(btnVisualiserNiveau);
 
         mainPanel.add(controlPanel, BorderLayout.NORTH);
-        mainPanel.add(new JScrollPane(visualisationPanel), BorderLayout.CENTER);
+        mainPanel.add(visualisationPanel, BorderLayout.CENTER);
 
         setContentPane(mainPanel);
-
-        // Action Listeners
-        btnVisualiserAeroport.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedAeroport = (String) aeroportComboBox.getSelectedItem();
-                visualiserNiveauxParAeroport(selectedAeroport);
-            }
-        });
-
-        btnVisualiserNiveau.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedNiveau = (int) niveauComboBox.getSelectedItem();
-                visualiserVolsParNiveau(selectedNiveau);
-            }
-        });
     }
 
-    private void visualiserNiveauxParAeroport(String aeroport) {
-        visualisationPanel.removeAll();
-        visualisationPanel.revalidate();
-        visualisationPanel.repaint();
+    private void lireFichierSommets(String filePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int maxCouleur = 0;
+            Map<String, Integer> sommetCouleurMap = new HashMap<>();
+
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String sommet = parts[0].trim();
+                    int couleur = Integer.parseInt(parts[1].trim());
+                    sommetCouleurMap.put(sommet, couleur);
+                    if (couleur > maxCouleur) {
+                        maxCouleur = couleur;
+                    }
+                }
+            }
+
+            // Remplir la niveauComboBox avec le nombre maximum de couleurs
+            niveauComboBox.removeAllItems();
+            for (int i = 1; i <= maxCouleur; i++) {
+                niveauComboBox.addItem(i);
+            }
+
+            // Mettre à jour les sommets du graphe avec les niveaux
+            for (Map.Entry<String, Integer> entry : sommetCouleurMap.entrySet()) {
+                String sommetId = entry.getKey();
+                int couleur = entry.getValue();
+                Node node = graph.getNode(sommetId);
+                if (node != null) {
+                    node.setAttribute("niveau", couleur);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void visualiserNiveauxParAeroport(String aeroport) {
+        tableModel.setRowCount(0); // Clear the table
 
         for (Node node : graph) {
             String aeroportNode = node.getAttribute("aeroport");
-            int niveau = node.getAttribute("niveau");
-            if (aeroportNode.equals(aeroport)) {
-                JLabel volLabel = new JLabel(node.getId() + " - Niveau: " + niveau);
-                volLabel.setOpaque(true);
-                volLabel.setBackground(getColorByLevel(niveau));
-                volLabel.setPreferredSize(new Dimension(200, 30));
-                visualisationPanel.add(volLabel);
+            Integer niveau = node.getAttribute("niveau");
+            if (aeroportNode != null && niveau != null && aeroportNode.equals(aeroport)) {
+                tableModel.addRow(new Object[]{node.getId(), aeroportNode, niveau});
             }
         }
-
-        visualisationPanel.revalidate();
-        visualisationPanel.repaint();
     }
 
-    private void visualiserVolsParNiveau(int niveau) {
-        visualisationPanel.removeAll();
-        visualisationPanel.revalidate();
-        visualisationPanel.repaint();
+    public void visualiserVolsParNiveau(int niveau) {
+        tableModel.setRowCount(0); // Clear the table
 
         for (Node node : graph) {
-            int nodeNiveau = node.getAttribute("niveau");
-            if (nodeNiveau == niveau) {
-                JLabel volLabel = new JLabel(node.getId() + " - Aéroport: " + node.getAttribute("aeroport"));
-                volLabel.setOpaque(true);
-                volLabel.setBackground(getColorByLevel(niveau));
-                volLabel.setPreferredSize(new Dimension(200, 30));
-                visualisationPanel.add(volLabel);
+            Integer nodeNiveau = node.getAttribute("niveau");
+            if (nodeNiveau != null && nodeNiveau == niveau) {
+                tableModel.addRow(new Object[]{node.getId(), node.getAttribute("aeroport"), nodeNiveau});
             }
-        }
-
-        visualisationPanel.revalidate();
-        visualisationPanel.repaint();
-    }
-
-    private Color getColorByLevel(int niveau) {
-        // Exemple simple de coloration selon le niveau
-        switch (niveau) {
-            case 1: return Color.RED;
-            case 2: return Color.BLUE;
-            case 3: return Color.GREEN;
-            case 4: return Color.YELLOW;
-            case 5: return Color.MAGENTA;
-            default: return Color.GRAY;
         }
     }
 }

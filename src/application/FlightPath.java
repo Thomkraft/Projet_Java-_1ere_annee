@@ -5,6 +5,11 @@ import org.jxmapviewer.viewer.GeoPosition;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @author tom
+ * 
+ */
 public class FlightPath {
     private List<GeoPosition> waypoints;
 

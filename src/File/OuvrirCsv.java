@@ -4,7 +4,7 @@
  */
 package File;
 
-import Stockage.Aeroports;
+import Stockage.StockageAeroports;
 import Stockage.Vols;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -13,29 +13,45 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+        
 /**
- *
- * @author thoma
+ *Class OuvrirCsv pour ouvrir un fichier .csv d'une liste de vols
+ * 
+ * @author thomas
+ * 
  */
-public class OpenCsv {
+public class OuvrirCsv {
 
     private List<Vols> listeVols;
 
-    
-    public OpenCsv(){
+    /**
+     * Constructeur de la class OpenCsv
+     * Initialise la liste de vol;
+     */
+    public OuvrirCsv(){
         System.out.println("Fichié des vols ouvert");
         listeVols = new ArrayList<>();
     }
     
+    /**
+     * Mhétode pour lire le fichier .csv contenant les vols
+     * 
+     * @author thomas
+     * 
+     * @param fichierCSV contient le chemin du fichier csv a lire
+     * @return Renvoie la une arraylist contenant les informations sur les différents vols
+     * @throws FileNotFoundException si le fichier n'est pas trouvé
+     * @throws IOException si erreure d'entrée sortie
+     * @throws CsvValidationException si le fichier n'est pas un CSV
+     * @throws NumberFormatException Si le fichier n'est pas un .csv ou est mal formaté
+     */
     public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException{
         try {
-            CSVReader reader = new CSVReader(new FileReader(fichierCSV));
+            CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
             String[] ligne;
 
 
-            //aéroport de départ de type aéroports ?
-            while ((ligne = reader.readNext()) != null){
+            while ((ligne = lecteur.readNext()) != null){
                 if (ligne[0].length()> 15) {
                     ligne = ligne[0].split(";");
                 }

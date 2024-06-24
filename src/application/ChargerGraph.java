@@ -12,6 +12,11 @@ import java.util.List;
 import org.graphstream.algorithm.ConnectedComponents;
 import org.graphstream.algorithm.Toolkit;
 
+/**
+ *
+ * @author tom
+ * 
+ */
 public class ChargerGraph {
     public static List<Graph> charger_graphes(List<String> noms_fichiers) {
         List<Graph> graphes = new ArrayList<>();

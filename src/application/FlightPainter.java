@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jxmapviewer.JXMapViewer;
 
+/**
+ *
+ * @author tom
+ *  
+ */
 public class FlightPainter {
     private List<FlightPath> flightPaths;
 

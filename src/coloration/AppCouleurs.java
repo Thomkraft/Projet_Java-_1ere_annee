@@ -6,6 +6,11 @@ import org.graphstream.graph.Node;
 import java.awt.Color;
 import java.util.ArrayList;
 
+/**
+ *
+ * @author tom
+ * 
+ */
 public class AppCouleurs {
     private final Graph graphe;
     private final int nbCouleurs;

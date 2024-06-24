@@ -1,12 +1,11 @@
 package Interface;
 
-import File.OpenCsv;
+import File.OuvrirCsv;
 import File.OpenTxt;
-import File.WriteInCSV;
-import File.WriteInTxt;
-import Stockage.Aeroports;
+import File.EcrireDansCSV;
+import File.EcrireDansTxt;
+import Stockage.StockageAeroports;
 import Stockage.Colisions;
-import Stockage.Result;
 import Stockage.Vols;
 import application.ChargerGraph;
 import coloration.ColoDSatur;
@@ -26,7 +25,11 @@ import org.graphstream.algorithm.ConnectedComponents;
 import static org.graphstream.algorithm.Toolkit.diameter;
 
 import org.graphstream.graph.Graph;
-
+/**
+ *
+ * @author tom
+ * 
+ */
 public class Fenetre extends JFrame {
     JLabel lbImportGraph = new JLabel("Importer un graph:");
     JButton btnImportGraph = new JButton("Importer");
@@ -54,6 +57,7 @@ public class Fenetre extends JFrame {
     
     private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
     private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
+    private List<StockageAeroports> listeAeroport = new ArrayList<>();
 
 
     public Fenetre() {
@@ -269,11 +273,11 @@ public class Fenetre extends JFrame {
                     List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
                     
                     
-                    WriteInTxt txtWriter = new WriteInTxt();
+                    EcrireDansTxt txtWriter = new EcrireDansTxt();
                     try {
-                        txtWriter.writeInFileResultColoration(graphes);
-                        listLastColoFileUpdates = txtWriter.getListLastColoFileUpdates();
-                        listLastGraphColo = txtWriter.getListLastGraphColo();
+                        txtWriter.ecrireDansFichierResultatColoration(graphes);
+                        listLastColoFileUpdates = txtWriter.getlistDernierColoFileMAJ();
+                        listLastGraphColo = txtWriter.getListDernierGraphColoMAJ();
                     } catch (IOException ex) {
                         System.out.println("erreur");
                     }
@@ -288,7 +292,9 @@ public class Fenetre extends JFrame {
         btCarte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Graph graph = getGraphCourant();
                 SwingUtilities.invokeLater(() -> {
+                    
                     // Vérifier si aucun graphe n'a été chargé
                     if (graphes == null || graphes.isEmpty()) {
                         JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un graph avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -302,7 +308,7 @@ public class Fenetre extends JFrame {
                     }
 
                     // Utiliser le fichier d'aéroport chargé pour afficher la carte
-                    Carte carte = new Carte(file2);
+                    Carte carte = new Carte(file2,graph);
                     carte.setVisible(true);
                     carte.afficherCarteAvecVolPredefini();
                 });
@@ -319,20 +325,18 @@ public class Fenetre extends JFrame {
 
 
                 String file;
-                //String file2 = "C:\\Users\\thoma\\Documents\\IUT\\1ère_année\\2-semestre\\2-Sae_crash\\Data_Test_txt/aeroports.txt";
 
 
-                OpenCsv openCsv = new OpenCsv();
+                OuvrirCsv openCsv = new OuvrirCsv();
                 OpenTxt openTxt = new OpenTxt();
                 Colisions colision = new Colisions();
-                WriteInTxt txtWriter = new WriteInTxt();
+                EcrireDansTxt txtWriter = new EcrireDansTxt();
 
                 List<Vols> listeVol = null;
                 List<String> listeColisionVol = new ArrayList<>();
-                List<Aeroports> listeAeroport = null;
+                List<StockageAeroports> listeAeroport = null;
                 
                 List<String> listeFichierErroné = new ArrayList<>();
-
                 try {
                     listeAeroport = openTxt.LectureTxtAéroports(file2);
                     if(listeAeroport == null) {
@@ -360,6 +364,7 @@ public class Fenetre extends JFrame {
 
                 String[] separationVolPath = fileVolPaths.toString().split(";");
                 String[] resultFileName;
+                
                 //Boucle pour comparer chaque vols a tous les vols
                 //tous les fichiers
                 boolean traité = false;
@@ -404,19 +409,19 @@ public class Fenetre extends JFrame {
                         
                     for(int i = 0; i < listeVol.size() ;  i++){
                         for(int j = i + 1 ; j < listeVol.size() ; j++){
-
-                            //recupere si colision ou pas et si colision recupere aussi les coordonnée de la colision
-                            Result resultat = colision.getCoordColision(listeVol.get(i), listeVol.get(j), listeAeroport);
-
-                            //si colision alors ajout du vol dans la liste des vols en colision
-                            if(resultat.isInColision()){
+                           
+                            
+                            boolean result = colision.getCoordColision(listeVol.get(i), listeVol.get(j), listeAeroport);
+                            
+                            if(result){
                                 listeColisionVol.add(listeVol.get(i).getNomVol()+ " " + listeVol.get(j).getNomVol());
                             }
+                            
                         }
                     }
 
                     try {
-                        txtWriter.writeInFile("ColisionVol-" + fileName, (ArrayList<String>) listeColisionVol, Vols.nbVols, txtWriter.getkMax());
+                        txtWriter.ecritureDansFichier("ColisionVol-" + fileName, (ArrayList<String>) listeColisionVol, Vols.nbVols, txtWriter.getkMax());
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -445,7 +450,7 @@ public class Fenetre extends JFrame {
                 System.out.println("------------------");
                 ArrayList<String> listPathFileUpdated = new ArrayList<>();
                 int m = 1;
-                listPathFileUpdated = (ArrayList<String>) txtWriter.getListLastFileUpdated();
+                listPathFileUpdated = (ArrayList<String>) txtWriter.getlistDernierFichierMAJ();
 
                 for(String path: listPathFileUpdated){
                     System.out.println("Fichier "+ m + " : " + path);
@@ -464,12 +469,12 @@ public class Fenetre extends JFrame {
                 
                 // Coloration du ou des graphes
                 List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
-                txtWriter = new WriteInTxt();
+                txtWriter = new EcrireDansTxt();
                 try {
                     
-                    txtWriter.writeInFileResultColoration(graphes);
-                    listLastColoFileUpdates = txtWriter.getListLastColoFileUpdates();
-                    listLastGraphColo = txtWriter.getListLastGraphColo();
+                    txtWriter.ecrireDansFichierResultatColoration(graphes);
+                    listLastColoFileUpdates = txtWriter.getlistDernierColoFileMAJ();
+                    listLastGraphColo = txtWriter.getListDernierGraphColoMAJ();
                     
                 } catch (IOException ex) {
                     System.out.println("erreur");
@@ -493,7 +498,7 @@ public class Fenetre extends JFrame {
                     System.out.println(dossier.getAbsolutePath());
                     
                     // Exporter les résultats dans le fichier
-                    WriteInCSV csvWriter = new WriteInCSV(listLastColoFileUpdates,listLastGraphColo,Fenetre.this);
+                    EcrireDansCSV csvWriter = new EcrireDansCSV(listLastColoFileUpdates,listLastGraphColo,Fenetre.this);
                     
                     try {
                         csvWriter.WriteFinalCSVColoFile(dossier.getAbsolutePath()+ "\\\\");
@@ -629,6 +634,10 @@ public class Fenetre extends JFrame {
 
     public static JTextPane getTxtConsole() {
         return txtConsole;
+    }
+    
+    public Graph getGraphCourant(){
+        return graphes.get(currentGraphIndex);
     }
 }
 
