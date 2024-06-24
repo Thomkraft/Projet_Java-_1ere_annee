@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
         
 /**
  *Class OuvrirCsv pour ouvrir un fichier .csv d'une liste de vols
@@ -45,30 +46,46 @@ public class OuvrirCsv {
      * @throws CsvValidationException si le fichier n'est pas un CSV
      * @throws NumberFormatException Si le fichier n'est pas un .csv ou est mal formaté
      */
-    public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException{
+    public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException, Exception{
         try {
+            int nbLigne = 0;
             CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
             String[] ligne;
 
-
+            String[] separateurFichier = fichierCSV.split("\\\\/.");
+            if (separateurFichier[separateurFichier.length-1].equals("txt")){
+                throw new IllegalArgumentException("le fichier de vol" + fichierCSV + " n'est pas un .csv");
+            } 
             while ((ligne = lecteur.readNext()) != null){
-                if (ligne[0].length()> 15) {
-                    ligne = ligne[0].split(";");
-                }
-                String nomVol = ligne[0];
-                String aeroportDepart = ligne[1];
-                String aeroportArrivee = ligne[2];
-                int heureDepart = Integer.parseInt(ligne[3]);
-                int minutesDepart = Integer.parseInt(ligne[4]);
-                int duree = Integer.parseInt(ligne[5]);
+                try {
+                    if (ligne[0].length()> 15) {
+                        ligne = ligne[0].split(";");
+                    }
+                    String nomVol = ligne[0];
+                    String aeroportDepart = ligne[1];
+                    String aeroportArrivee = ligne[2];
+                    int heureDepart = Integer.parseInt(ligne[3]);
+                    int minutesDepart = Integer.parseInt(ligne[4]);
+                    int duree = Integer.parseInt(ligne[5]);
 
-                Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree);
-                listeVols.add(vol);
+                    Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree);
+                    listeVols.add(vol);
+                    nbLigne++;
+                } catch (NumberFormatException ex){
+                    continue;
+                }
+                
+                if (nbLigne == 0){
+                    throw new Exception("Mauvais format pour toutes les lignes du fichier CSV !");
+                }
 
             }
-        } catch (NumberFormatException ex) {
-            System.err.println("le fichier de vol" + fichierCSV + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Erreur : " + ex.getMessage());
             return null;
+         
+        } catch (Exception ex){
+            System.err.println("Erreur : " + ex.getMessage());
         }
         
       
