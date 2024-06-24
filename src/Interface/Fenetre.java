@@ -51,6 +51,7 @@ public class Fenetre extends JFrame {
     private List<Graph> graphes;
     private List<String> fileNames;
     private List<Vols> listeVol = new ArrayList();
+    private List<Vols> listeVolPourCarte = new ArrayList();
 
     private String fichierAeroport = null;
     private StringBuilder fileVolPaths = new StringBuilder();
@@ -336,12 +337,15 @@ public class Fenetre extends JFrame {
                         JOptionPane.showMessageDialog(Fenetre.this, "Veuillez charger un fichier d'aéroport avant d'afficher la carte.", "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+                    
                     System.out.println("Vols Chargés :");
-                    for(Vols vol : listeVol) {
+                    int i = 0;
+                    for(Vols vol : listeVolPourCarte) {
                         System.out.println(vol);
                     }
+                    
                     // Utiliser le fichier d'aéroport chargé pour afficher la carte
-                    Carte carte = new Carte(fichierAeroport,cheminTxtColo,listeVol);
+                    Carte carte = new Carte(fichierAeroport,cheminTxtColo,listeVolPourCarte);
                     carte.setVisible(true);
                     carte.afficherCarteAvecVolPredefini();
                 });
@@ -372,6 +376,7 @@ public class Fenetre extends JFrame {
                 Colisions colision = new Colisions();
                 EcrireDansTxt txtWriter = new EcrireDansTxt();
                 listeVol = null;
+                listeVolPourCarte = new ArrayList<>();
                 
                 List<String> listeColisionVol = new ArrayList<>();
                 List<StockageAeroports> listeAeroport = null;
@@ -472,8 +477,13 @@ public class Fenetre extends JFrame {
                     System.out.println("Nombre de colisions : " + colision.nbColisions);
                     System.out.println("nombre de vols : " + Vols.nbVols);
                     */
+                    for(Vols vol : listeVol) {
+                        listeVolPourCarte.add(vol);
+                    }
+                    
                     listeColisionVol.clear();
                     colision.setNbColisions(0);
+                    listeVol.clear();
                     Vols.setNbVols(0);
                     
                     
