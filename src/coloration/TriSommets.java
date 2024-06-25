@@ -27,7 +27,7 @@ public class TriSommets {
         for (Node n : graph) {
             listeSommets.add(n);
         }
-
+        
         // Tri
         int tailleListe = listeSommets.size();
 

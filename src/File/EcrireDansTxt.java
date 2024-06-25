@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import scala.actors.threadpool.Arrays;
 
 /**
  *CLass EcrireDansTxt pour écrire dans un fichier texte les infos comme 
@@ -103,15 +107,76 @@ public class EcrireDansTxt {
             
             String cheminFichier = "./ResultatColoration/" + separation[separation.length-1];
             FileWriter lecteurFichier = new FileWriter(cheminFichier);
-            
            
+           if (g.getNodeCount() <= 100) {
             
-            for (int i = 0; i < g.getNodeCount(); i++){
-                Object couleur = g.getNode(i).getAttribute("couleur");
+           // Récupération de tous les sommets dans une liste
+            ArrayList<Node> nodes = new ArrayList<>();
+            for (int i = 0; i < g.getNodeCount(); i++) {
+                nodes.add(g.getNode(i));
+            }
+
+            
+            // Tri des sommets par leur identifiant
+            Collections.sort(nodes, new Comparator<Node>() {
+                @Override
+                public int compare(Node n1, Node n2) {
+                    String s1 = n1.toString();
+                    String s2 = n2.toString();
+                    
+                    int i1 = 0, i2 = 0;
+                    
+                    while (i1 < s1.length() && i2 < s2.length()) {
+                        char c1 = s1.charAt(i1);
+                        char c2 = s2.charAt(i2);
+
+                        if (Character.isDigit(c1) && Character.isDigit(c2)) {
+                            //alors comparer des int
+                            int start1 = i1;
+                            int start2 = i2;
+
+                            while (i1 < s1.length() && Character.isDigit(s1.charAt(i1))) i1++;
+                            while (i2 < s2.length() && Character.isDigit(s2.charAt(i2))) i2++;
+
+                            String num1 = s1.substring(start1, i1);
+                            String num2 = s2.substring(start2, i2);
+
+                            int diff = Integer.compare(Integer.parseInt(num1), Integer.parseInt(num2));
+                            if (diff != 0) {
+                                return diff;
+                            }
+                        } else {
+                            // alors comparer des Strinf type AF quelque chose
+                            if (c1 != c2) {
+                                return c1 - c2;
+                            }
+                            i1++;
+                            i2++;
+                        }
+                    }
+
+                    return s1.length() - s2.length();
+                }
+
+                
+            }); 
+            
+            for (Node node : nodes) {
+                Object couleur = node.getAttribute("couleur");
                 String couleurString = couleur.toString();
                 int intCouleur = Integer.parseInt(couleurString) + 1;
-                lecteurFichier.write(g.getNode(i) + " ; " + intCouleur +"\n");
+                lecteurFichier.write(node + " ; " + intCouleur + "\n");
             }
+            
+           } else {
+            
+                for (int i = 0; i < g.getNodeCount(); i++){
+                    Object couleur = g.getNode(i).getAttribute("couleur");
+                    String couleurString = couleur.toString();
+                    int intCouleur = Integer.parseInt(couleurString) + 1;
+                    lecteurFichier.write(g.getNode(i) + " ; " + intCouleur +"\n");
+                }
+           }
             
             lecteurFichier.close();
             

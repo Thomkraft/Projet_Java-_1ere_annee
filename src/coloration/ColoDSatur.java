@@ -5,6 +5,9 @@ import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -36,8 +39,8 @@ public class ColoDSatur {
     private void colorerGraphe() {
         // Tri des sommets selon la valeur décroissante de leur degré dans la liste listeSommets
         new TriSommets(graphe, listeSommets);
-
-
+        
+        
         // Tous les sommets sont initialisés avec la même couleur fictive -1
         for (Node n : graphe) {
             n.addAttribute("couleur", -1);
