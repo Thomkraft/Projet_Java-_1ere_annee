@@ -743,7 +743,8 @@ public class Fenetre extends JFrame {
     * @author tom
     */
     public String getListLastColoFileUpdates() {
-        return listLastColoFileUpdates.getLast();
+        //return listLastColoFileUpdates.getLast();
+        return listLastColoFileUpdates.get(listLastColoFileUpdates.size()-1);
     }
 }
 

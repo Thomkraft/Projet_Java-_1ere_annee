@@ -44,8 +44,9 @@ public class ColoDSatur {
         }
 
         // Coloration fictive du premier sommet de degré maximum avec la première couleur
-        listeSommets.getFirst().setAttribute("couleur", 0);
-        ajoutSommetColorie(listeSommets.getFirst());
+        //listeSommets.getFirst()
+        listeSommets.get(0).setAttribute("couleur", 0);
+        ajoutSommetColorie(listeSommets.get(0));
 
         graphe.addAttribute("nbConflits", 0);
 
