@@ -58,11 +58,11 @@ public class Fenetre extends JFrame {
     
     private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
     private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
-    private List<StockageAeroports> listeAeroport = new ArrayList<>();
 
     /**
      * Constructeur de la classe Fenetre.
      * Initialise l'interface graphique et les écouteurs d'événements.
+     * @author tom
      */
     public Fenetre() {
         //Style fenetre
@@ -278,6 +278,12 @@ public class Fenetre extends JFrame {
         
         btnImportGraph.addActionListener(new ActionListener() {
             @Override
+            /**
+             * Action à réaliser lors du clic sur le bouton "Importer Graph".
+             * Ouvre une fenêtre de dialogue pour sélectionner le fichier de graph.
+             * @author tom/thomas
+             * @param e l'événement de clic
+             */
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -317,7 +323,7 @@ public class Fenetre extends JFrame {
         btCarte.addActionListener(new ActionListener() {
             /**
              * Action à réaliser lors du clic sur le bouton "Afficher la Carte".
-             * Affiche une carte graphique des aéroports et des vols.
+             * Affiche une carte graphique des aéroports (et des vols).
              * @author tom
              * @param e l'événement de clic
              */
@@ -538,6 +544,12 @@ public class Fenetre extends JFrame {
         });
 
         btExporter.addActionListener(new ActionListener() {
+            /**
+             * Action à réaliser lors du clic sur le bouton "Exporter".
+             * Ouvre une fenêtre de dialogue pour sélectionner le dosser de destination du fichier csv de coloration
+             * @author tom/thomas
+             * @param e l'événement de clic
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -697,7 +709,7 @@ public class Fenetre extends JFrame {
         // Ajouter un ActionListener pour le bouton Suivant de FenetreGraph
         fenetreGraph.addNextButtonListener(new ActionListener() {
             /**
-            * permet de passer au graph precedent
+            * permet de passer au graph suivant
             * @author tom
             * @param e l'événement de clic
             */
@@ -726,15 +738,6 @@ public class Fenetre extends JFrame {
     */
     public static JTextPane getTxtConsole() {
         return txtConsole;
-    }
-    
-    /**
-    * Renvoie le graphique courant.
-    * 
-    * @author tom
-    */
-    public Graph getGraphCourant(){
-        return graphes.get(currentGraphIndex);
     }
     
     /**

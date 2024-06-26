@@ -30,7 +30,7 @@ public final class Visualisation extends JFrame {
 
     /**
      * Constructeur de la fenêtre de visualisation.
-     *
+     * @author Tom
      * @param listeAeroport Liste des aéroports sous forme de tableau de chaînes de caractères [code, nom].
      * @param cheminAeroport Chemin du fichier d'aéroports.
      * @param cheminTxtColo Chemin du fichier de niveaux de vol.
@@ -64,7 +64,7 @@ public final class Visualisation extends JFrame {
 
     /**
      * Initialise l'interface utilisateur avec les composants graphiques.
-     *
+     * @author Tom
      * @param listeAeroport Liste des aéroports.
      * @param cheminTxtColo Chemin du fichier de niveaux de vol.
      */
@@ -135,7 +135,7 @@ public final class Visualisation extends JFrame {
 
     /**
      * Récupère le niveau maximum de vol à partir du fichier spécifié.
-     *
+     * @author Tom
      * @param filePath Chemin du fichier de niveaux de vol.
      * @return Le niveau maximum de vol.
      */
@@ -164,7 +164,7 @@ public final class Visualisation extends JFrame {
 
     /**
      * Charge les niveaux de vol à partir du fichier spécifié et met à jour la liste des vols.
-     *
+     * @author Tom
      * @param filePath Chemin du fichier de niveaux de vol.
      */
     public void setNiveauForVolFromFile(String filePath) {
@@ -208,7 +208,7 @@ public final class Visualisation extends JFrame {
     /**
      * Affiche les vols en fonction de l'aéroport sélectionné.
      * Vide d'abord la table avant de remplir avec les vols correspondants.
-     *
+     * @author Tom
      * @param aeroportNom Nom de l'aéroport sélectionné.
      */
     public void visualiserNiveauxParAeroport(String aeroportNom) {
@@ -246,7 +246,7 @@ public final class Visualisation extends JFrame {
     /**
      * Affiche les vols en fonction du niveau sélectionné.
      * Vide d'abord la table avant de remplir avec les vols correspondants.
-     *
+     * @author Tom
      * @param niveau Niveau de vol sélectionné.
      */
     public void visualiserVolsParNiveau(int niveau) {

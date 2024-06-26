@@ -24,14 +24,15 @@ import org.jxmapviewer.painter.CompoundPainter;
  * Classe représentant une fenêtre affichant une carte avec des aéroports et des vols.
  * Utilise JXMapViewer pour la visualisation cartographique et permet de visualiser les vols
  * en fonction des aéroports et des niveaux sélectionnés.
+ * @author tom
  */
 public class Carte extends JFrame {
     private JXMapViewer mapViewer;
     private FlightPainter flightPainter;
     private List<WaypointWithName> waypoints;
-    private JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
-    private JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
-    private List<Vols> listeVol;
+    private final JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
+    private final JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
+    private final List<Vols> listeVol;
 
     /**
      * Constructeur de la classe Carte.
@@ -40,6 +41,7 @@ public class Carte extends JFrame {
      * @param cheminAeroports Chemin vers le fichier des aéroports.
      * @param cheminTxtColo   Chemin vers le fichier de texte coloré.
      * @param listeVol Liste des vols à afficher.
+     * @author tom
      */
     public Carte(String cheminAeroports, String cheminTxtColo, List<Vols> listeVol) {
         this.listeVol = listeVol;
@@ -48,7 +50,7 @@ public class Carte extends JFrame {
 
     /**
      * Initialise la carte avec les composants graphiques et les écouteurs nécessaires.
-     *
+     * @author tom
      * @param cheminAeroports Chemin vers le fichier des aéroports.
      * @param cheminTxtColo   Chemin vers le fichier de texte coloré.
      */
@@ -116,13 +118,14 @@ public class Carte extends JFrame {
      * Affiche la carte avec un vol prédéfini entre deux positions géographiques.
      * Utilise un FlightPainter pour dessiner le vol et centre la carte sur la trajectoire.
      * Ajuste également le niveau de zoom pour afficher correctement les points.
+     * @author tom
      */
     public void afficherCarteAvecVolPredefini() {
         GeoPosition start = new GeoPosition(48.856613, 2.352222); // Paris
         GeoPosition end = new GeoPosition(45.75, 4.85); // Lyon
 
         // Calculer le centre géographique entre les deux points
-        GeoPosition center = calculateCenter(start, end);
+        GeoPosition center = calculerCentre(start, end);
 
         // Ajouter le vol prédéfini en utilisant le nouveau FlightPainter
         flightPainter.setFlight(start, end);
@@ -138,12 +141,12 @@ public class Carte extends JFrame {
 
     /**
      * Calcule le centre géographique entre deux positions géographiques.
-     *
+     * @author tom
      * @param start Position géographique de départ.
      * @param end   Position géographique de fin.
      * @return Le centre géographique entre les deux positions.
      */
-    private GeoPosition calculateCenter(GeoPosition start, GeoPosition end) {
+    private GeoPosition calculerCentre(GeoPosition start, GeoPosition end) {
         double lat1 = Math.toRadians(start.getLatitude());
         double lon1 = Math.toRadians(start.getLongitude());
         double lat2 = Math.toRadians(end.getLatitude());
