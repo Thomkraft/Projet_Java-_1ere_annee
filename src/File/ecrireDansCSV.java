@@ -41,44 +41,44 @@ public class EcrireDansCSV {
     }
     
     /**
-     * Methode WriteFinalCSVColoFile, va écrire dans un dossier donné en paramètre un fichier .csv (nommé par une entrée utilisateur et par defaut coloration-groupe2.Y.csv) contenant pour chaque
-     * ligne le un fichier .txt ; nombre de conflict dans ce fichier
+     * Methode EcrireDernierCSVFichierColo, va écrire dans un dossier donné en paramètre un fichier .csv (nommé par une entrée utilisateur et par defaut coloration-groupe2.Y.csv) contenant pour chaque
+ ligne le un fichier .txt ; nombre de conflict dans ce fichier
      * 
      * @author Thomas
      * 
      * @param path chemin ou l'on veut ecrire le .csv 
      * @throws IOException si erreur d'entrée sortis / utilise le nom de fichier par default si erreur
      */
-    public void WriteFinalCSVColoFile(String path) throws IOException{
-        boolean csvCreated = false;
+    public void EcrireDernierCSVFichierColo(String path) throws IOException{
+        boolean csvCréé = false;
         
         int i = 0;
         
-        String fileName = "coloration-groupe2.Y";
+        String NomFichier = "coloration-groupe2.Y";
         
-        String value = JOptionPane.showInputDialog(fen, "Entrez le nom de votre fichier (coloration-groupe2.Y par defaut) :");
+        String Valeur = JOptionPane.showInputDialog(fen, "Entrez le nom de votre fichier (coloration-groupe2.Y par defaut) :");
         
-        if (value.length() >= 1) {
-            fileName = value;
+        if (Valeur.length() >= 1) {
+            NomFichier = Valeur;
         }
         
         for (Graph g: listLastGraphColo){
             CSVWriter writer = null;
             
-            if (!csvCreated){
-                    writer = new CSVWriter(new FileWriter(path + fileName + ".csv"));
-                    csvCreated = true;
+            if (!csvCréé){
+                    writer = new CSVWriter(new FileWriter(path + NomFichier + ".csv"));
+                    csvCréé = true;
             } else {
 
-                writer = new CSVWriter(new FileWriter(path + fileName + ".csv", true));
+                writer = new CSVWriter(new FileWriter(path + NomFichier + ".csv", true));
             }
             
-            String filePath = listLastColoFileUpdates.get(i);
+            String cheminFichier = listLastColoFileUpdates.get(i);
             
-            String[] separation = filePath.split("\\\\");
+            String[] separation = cheminFichier.split("\\\\");
             
-            String[] values = new String[]{separation[separation.length-1] + ";" + g.getAttribute("nbConflits").toString()};
-            writer.writeNext(values);
+            String[] valeur = new String[]{separation[separation.length-1] + ";" + g.getAttribute("nbConflits").toString()};
+            writer.writeNext(valeur);
 
             writer.close();
                 

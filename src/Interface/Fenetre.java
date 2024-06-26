@@ -553,7 +553,7 @@ public class Fenetre extends JFrame {
                     EcrireDansCSV csvWriter = new EcrireDansCSV(listLastColoFileUpdates,listLastGraphColo,Fenetre.this);
                     
                     try {
-                        csvWriter.WriteFinalCSVColoFile(dossier.getAbsolutePath()+ "\\\\");
+                        csvWriter.EcrireDernierCSVFichierColo(dossier.getAbsolutePath()+ "\\\\");
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }
