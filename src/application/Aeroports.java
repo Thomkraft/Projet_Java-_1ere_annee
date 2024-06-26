@@ -22,21 +22,21 @@ public class Aeroports {
      * Crée une liste de points de passage (waypoints) à partir du fichier spécifié.
      * Chaque waypoint contient une position géographique (latitude, longitude) et un nom d'aéroport.
      * 
-     * @param filePath Le chemin vers le fichier contenant les données des aéroports
+     * @param cheminFichier Le chemin vers le fichier contenant les données des aéroports
      * @return Une liste de WaypointWithName contenant les positions et noms des aéroports
      */
-    public static List<NomWaypoint> createWaypoints(String filePath) {
+    public static List<NomWaypoint> createWaypoints(String cheminFichier) {
         List<NomWaypoint> waypoints = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
+        try (BufferedReader br = new BufferedReader(new FileReader(cheminFichier))) {
+            String ligne;
+            while ((ligne = br.readLine()) != null) {
+                String[] parts = ligne.split(";");
                 if (parts.length >= 10) {
                     double latitude = parseCoordinate(parts[2], parts[3], parts[4], parts[5]);
                     double longitude = parseCoordinate(parts[6], parts[7], parts[8], parts[9]);
-                    String airportName = parts[1];
-                    NomWaypoint waypoint = new NomWaypoint(new GeoPosition(latitude, longitude), airportName);
+                    String nomAeroport = parts[1];
+                    NomWaypoint waypoint = new NomWaypoint(new GeoPosition(latitude, longitude), nomAeroport);
                     waypoints.add(waypoint);
                 }
             }
@@ -60,11 +60,11 @@ public class Aeroports {
         double degrees = Double.parseDouble(degreeStr);
         double minutes = Double.parseDouble(minuteStr);
         double seconds = Double.parseDouble(secondStr);
-        double coordinate = degrees + (minutes / 60) + (seconds / 3600);
+        double coordonnée = degrees + (minutes / 60) + (seconds / 3600);
         if (direction.equals("S") || direction.equals("O")) {
-            coordinate = -coordinate;
+            coordonnée = -coordonnée;
         }
-        return coordinate;
+        return coordonnée;
     }
     
     /**

@@ -82,8 +82,8 @@ public class Carte extends JFrame {
         mapViewer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                GeoPosition currentPosition = mapViewer.convertPointToGeoPosition(e.getPoint());
-                mapViewer.setAddressLocation(currentPosition);
+                GeoPosition positionCourante = mapViewer.convertPointToGeoPosition(e.getPoint());
+                mapViewer.setAddressLocation(positionCourante);
             }
         });
 
@@ -119,17 +119,17 @@ public class Carte extends JFrame {
      * @author tom
      */
     public void afficherCarteAvecVolPredefini() {
-        GeoPosition start = new GeoPosition(48.856613, 2.352222); // Paris
-        GeoPosition end = new GeoPosition(45.75, 4.85); // Lyon
+        GeoPosition debut = new GeoPosition(48.856613, 2.352222); // Paris
+        GeoPosition fin = new GeoPosition(45.75, 4.85); // Lyon
 
         // Calculer le centre géographique entre les deux points
-        GeoPosition center = calculerCentre(start, end);
+        GeoPosition centre = calculerCentre(debut, fin);
 
         // Ajouter le vol prédéfini en utilisant le nouveau FlightPainter
-        volPainter.setFlight(start, end);
+        volPainter.setVol(debut, fin);
 
         // Centrer la carte sur le centre calculé
-        mapViewer.setAddressLocation(center);
+        mapViewer.setAddressLocation(centre);
 
         // Ajuster le niveau de zoom pour voir les deux points
         mapViewer.setZoom(13); // Réglez le zoom approprié pour voir la France

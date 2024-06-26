@@ -22,7 +22,7 @@ public class FenetreGraphe extends JInternalFrame {
     private final JButton btEcran = new JButton("Agrandir");
     private final JButton btnPrevious = new JButton("<");
     private final JButton btnNext = new JButton(">");
-    private final JTextField txtGraphNumber = new JTextField(3);
+    private final JTextField txtNumGraph = new JTextField(3);
     private boolean isFullScreen = false;
     private JFrame fullScreenFrame;
     private final Fenetre fenetre;
@@ -32,13 +32,13 @@ public class FenetreGraphe extends JInternalFrame {
      * Constructeur pour FenetreGraphe.
      * @param graph le graphique à afficher
      * @param fenetre la fenêtre parente
-     * @param fileName le nom du fichier
+     * @param nomFichier le nom du fichier
      * @author tom
      */
-    public FenetreGraphe(Graph graph, Fenetre fenetre, String fileName) {
-        super(fileName, false, false, false, false);
+    public FenetreGraphe(Graph graph, Fenetre fenetre, String nomFichier) {
+        super(nomFichier, false, false, false, false);
         this.fenetre = fenetre;
-        this.fileName = fileName; 
+        this.fileName = nomFichier; 
         setSize(1170, 400);
 
         viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -48,7 +48,7 @@ public class FenetreGraphe extends JInternalFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(view, BorderLayout.CENTER);
 
-        txtGraphNumber.setHorizontalAlignment(JTextField.CENTER);
+        txtNumGraph.setHorizontalAlignment(JTextField.CENTER);
         afficherBoutons(getContentPane());
 
         this.setResizable(true);
@@ -76,7 +76,7 @@ public class FenetreGraphe extends JInternalFrame {
             fullScreenFrame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    restoreWindow();
+                    restaurerFenetre();
                 }
             });
 
@@ -88,7 +88,7 @@ public class FenetreGraphe extends JInternalFrame {
      * Restaurer la fenêtre à sa taille normale après avoir été en plein écran.
      * @author tom
      */
-    public void restoreWindow() {
+    public void restaurerFenetre() {
         if (isFullScreen) {
             isFullScreen = false;
             btEcran.setText("Agrandir");
@@ -116,7 +116,7 @@ public class FenetreGraphe extends JInternalFrame {
      * @author tom
      */
     public void addIndiceTxtListener(ActionListener listener) {
-        txtGraphNumber.addActionListener(listener);
+        txtNumGraph.addActionListener(listener);
     }
 
     /**
@@ -124,7 +124,7 @@ public class FenetreGraphe extends JInternalFrame {
      * @param listener l'écouteur d'action à ajouter
      * @author tom
      */
-    public void addNextButtonListener(ActionListener listener) {
+    public void addSuivButtonListener(ActionListener listener) {
         btnNext.addActionListener(listener);
     }
 
@@ -135,9 +135,9 @@ public class FenetreGraphe extends JInternalFrame {
      * @author tom
      * @throws NumberFormatException si le texte n'est pas un nombre valide
      */
-    public int getGraphNumber() {
+    public int getNumGraph() {
         try {
-            return Integer.parseInt(txtGraphNumber.getText());
+            return Integer.parseInt(txtNumGraph.getText());
         } catch (NumberFormatException e) {
             return 1;
         }
@@ -157,8 +157,8 @@ public class FenetreGraphe extends JInternalFrame {
      * @param index l'indice du graphique
      * @author tom
      */
-    public void setGraphIndex(int index) {
-        txtGraphNumber.setText(Integer.toString(index));
+    public void setIndiceGraph(int index) {
+        txtNumGraph.setText(Integer.toString(index));
     }
 
     /**
@@ -185,7 +185,7 @@ public class FenetreGraphe extends JInternalFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isFullScreen) {
-                    restoreWindow();
+                    restaurerFenetre();
                 } else {
                     maximizeWindow();
                 }
@@ -197,7 +197,7 @@ public class FenetreGraphe extends JInternalFrame {
 
         JPanel leftPanel = new JPanel();
         leftPanel.add(btnPrevious);
-        leftPanel.add(txtGraphNumber);
+        leftPanel.add(txtNumGraph);
         leftPanel.add(btnNext);
 
         JPanel CenterPanel = new JPanel();

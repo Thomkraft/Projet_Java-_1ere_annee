@@ -12,7 +12,7 @@ import org.jxmapviewer.viewer.GeoPosition;
  * @version 1.0
  */
 public class NomWaypoint extends DefaultWaypoint {
-    private final String name;
+    private final String nom;
 
     /**
      * Constructeur de la classe `WaypointWithName`.
@@ -22,7 +22,7 @@ public class NomWaypoint extends DefaultWaypoint {
      */
     public NomWaypoint(GeoPosition coord, String name) {
         super(coord);
-        this.name = name;
+        this.nom = name;
     }
 
     /**
@@ -30,7 +30,7 @@ public class NomWaypoint extends DefaultWaypoint {
      * @author tom
      * @return Le nom du waypoint
      */
-    public String getName() {
-        return name;
+    public String getNom() {
+        return nom;
     }
 }

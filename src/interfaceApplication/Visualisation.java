@@ -24,7 +24,7 @@ public final class Visualisation extends JFrame {
     private JTable volTable;
     private DefaultTableModel tableModel;
     private final List<Vols> listeVol;
-    private final int cmd; // cmd = 1 for airport, 2 for level
+    private final int cmd; // cmd = 1 pour aeroport, 2 pour niveau de vol
     private final String cheminAeroport;
     private final List<String[]> listeAeroport;
 
@@ -49,7 +49,7 @@ public final class Visualisation extends JFrame {
 
         initUI(listeAeroport, cheminTxtColo);
 
-        setNiveauForVolFromFile(cheminTxtColo);
+        setNiveauVol(cheminTxtColo);
         System.out.println("Liste des vols chargés : " + listeVol);
         actualiserButton.addActionListener(e -> {
             if (cmd == 1) {
@@ -141,15 +141,14 @@ public final class Visualisation extends JFrame {
      */
     private int getKmax(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
+            String ligne;
             int maxCouleur = 0;
 
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
+            while ((ligne = br.readLine()) != null) {
+                String[] parts = ligne.split(";");
                 if (parts.length == 2) {
                     String couleurStr = parts[1].trim();
                     int couleur = Integer.parseInt(couleurStr);
-                    System.out.println("Couleur : " + couleur);
                     if (couleur > maxCouleur) {
                         maxCouleur = couleur;
                     }
@@ -167,7 +166,7 @@ public final class Visualisation extends JFrame {
      * @author Tom
      * @param filePath Chemin du fichier de niveaux de vol.
      */
-    public void setNiveauForVolFromFile(String filePath) {
+    public void setNiveauVol(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {

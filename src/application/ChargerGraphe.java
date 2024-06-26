@@ -16,7 +16,7 @@ import java.util.List;
  * le nombre d'arêtes, et de les colorier en utilisant l'algorithme DSatur.
  * Elle gère également les erreurs liées à la lecture des fichiers ou à l'ajout des arêtes.
  * 
- * @author tom
+ * @author tom/alec
  * @version 1.0
  */
 public class ChargerGraphe {

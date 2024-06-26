@@ -47,9 +47,9 @@ public class Fenetre extends JFrame {
     JDesktopPane graphPanel = new JDesktopPane();
 
 
-    private int currentGraphIndex = 0;
+    private int indiceGraphCourant = 0;
     private List<Graph> graphes;
-    private List<String> fileNames;
+    private List<String> nomFichiers;
     private List<Vols> listeVol = new ArrayList<>();
     private List<Vols> listeVolPourCarte = new ArrayList<>();
 
@@ -229,18 +229,18 @@ public class Fenetre extends JFrame {
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
-                    File[] files = fileChooser.getSelectedFiles();
+                    File[] fichiers = fileChooser.getSelectedFiles();
                     fileVolPaths = new StringBuilder();
-                    StringBuilder fileName = new StringBuilder();
-                    for (File file : files) {
-                        fileVolPaths.append(file.getAbsolutePath()).append(";");
+                    StringBuilder nomFichier = new StringBuilder();
+                    for (File fichier : fichiers) {
+                        fileVolPaths.append(fichier.getAbsolutePath()).append(";");
 
-                        String[] separation = file.getAbsolutePath().split("\\\\");
-                        fileName.append(separation[separation.length-1]).append(";");
+                        String[] separation = fichier.getAbsolutePath().split("\\\\");
+                        nomFichier.append(separation[separation.length-1]).append(";");
 
 
                     }
-                    txtInsertVol.setText(fileName.toString());
+                    txtInsertVol.setText(nomFichier.toString());
 
                     System.out.println(fileVolPaths);
 
@@ -263,11 +263,11 @@ public class Fenetre extends JFrame {
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
+                    File fichier = fileChooser.getSelectedFile();
 
-                    fichierAeroport = file.getAbsolutePath();
+                    fichierAeroport = fichier.getAbsolutePath();
 
-                    String[] separation = file.getAbsolutePath().split("\\\\");
+                    String[] separation = fichier.getAbsolutePath().split("\\\\");
 
                     lbInsertionListeAeroport.setText("liste chargé : " + separation[separation.length-1]);
 
@@ -291,17 +291,17 @@ public class Fenetre extends JFrame {
                 fileChooser.setMultiSelectionEnabled(true);
                 int option = fileChooser.showOpenDialog(Fenetre.this);
                 if (option == JFileChooser.APPROVE_OPTION) {
-                    File[] files = fileChooser.getSelectedFiles();
-                    ArrayList<String> filePaths = new ArrayList<>();
-                    ArrayList<String> fileNames = new ArrayList<>();
+                    File[] fichiers = fileChooser.getSelectedFiles();
+                    ArrayList<String> cheminsFichiers = new ArrayList<>();
+                    ArrayList<String> nomsFichiers = new ArrayList<>();
 
-                    for (File file : files) {
-                        filePaths.add(file.getAbsolutePath());
-                        fileNames.add(file.getName());
+                    for (File fichier : fichiers) {
+                        cheminsFichiers.add(fichier.getAbsolutePath());
+                        nomsFichiers.add(fichier.getName());
                     }
 
                     // Coloration du ou des graphes
-                    List<Graph> graphes = ChargerGraphe.charger_graphes(filePaths);
+                    List<Graph> graphes = ChargerGraphe.charger_graphes(cheminsFichiers);
                     
                     
                     EcrireDansTxt txtWriter = new EcrireDansTxt();
@@ -313,7 +313,7 @@ public class Fenetre extends JFrame {
                         System.out.println("erreur");
                     }
                     
-                    Fenetre.this.afficherGraphes(graphes, fileNames);
+                    Fenetre.this.afficherGraphes(graphes, nomsFichiers);
                     
                     System.out.println("-------------------------------------------------------------------------");
                 }
@@ -574,13 +574,13 @@ public class Fenetre extends JFrame {
     */
     public void afficherGraphes(List<Graph> graphes, List<String> fileNames) {
         this.graphes = graphes;
-        this.fileNames = fileNames;
+        this.nomFichiers = fileNames;
         afficherGraphiqueCourant();
     }
     
-    private String getFileNameFromGraph(int index) {
+    private String getNomFichierDepuisUnGraph(int index) {
         
-        return fileNames.get(index);
+        return nomFichiers.get(index);
         
     }
 
@@ -597,11 +597,11 @@ public class Fenetre extends JFrame {
         graphPanel.removeAll();
 
         // Create an instance of FenetreGraphe with the current graph and the file name
-        String fileName = getFileNameFromGraph(currentGraphIndex);
-        FenetreGraphe fenetreGraph = new FenetreGraphe(graphes.get(currentGraphIndex), this, fileName); // Pass the file name
+        String nomFichier = getNomFichierDepuisUnGraph(indiceGraphCourant);
+        FenetreGraphe fenetreGraph = new FenetreGraphe(graphes.get(indiceGraphCourant), this, nomFichier); // Pass the file name
 
         // Mettre à jour l'indice du graphique dans fenetreGraph
-        fenetreGraph.setGraphIndex(currentGraphIndex + 1); // Les indices des graphiques commencent à 1 pour l'utilisateur
+        fenetreGraph.setIndiceGraph(indiceGraphCourant + 1); // Les indices des graphiques commencent à 1 pour l'utilisateur
 
         // Ajouter FenetreGraph à graphPanel
         graphPanel.add(fenetreGraph);
@@ -623,7 +623,7 @@ public class Fenetre extends JFrame {
         
         
        
-        new InfosConsole(graphes.get(currentGraphIndex));
+        new InfosConsole(graphes.get(indiceGraphCourant));
         
         
         
@@ -637,16 +637,16 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Récupérer le texte saisi dans le JTextField
-                int inputText = fenetreGraph.getGraphNumber();
+                int inputText = fenetreGraph.getNumGraph();
                 try {
-                    int newIndex = inputText - 1; // Soustraire 1 car les indices commencent à 0
+                    int newIndice = inputText - 1; // Soustraire 1 car les indices commencent à 0
                     
                     // Vérifier si l'indice est valide
-                    if (newIndex >= 0 && newIndex < graphes.size()) {
-                        currentGraphIndex = newIndex;
+                    if (newIndice >= 0 && newIndice < graphes.size()) {
+                        indiceGraphCourant = newIndice;
                         // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
                         if (fenetreGraph.isFullScreen()) {
-                            fenetreGraph.restoreWindow();
+                            fenetreGraph.restaurerFenetre();
                         }
                         // Afficher le graphique correspondant
                         afficherGraphiqueCourant();
@@ -670,13 +670,13 @@ public class Fenetre extends JFrame {
             */
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (currentGraphIndex > 0) {
+                if (indiceGraphCourant > 0) {
                     // Décrémenter l'index du graphique courant
-                    currentGraphIndex--;
+                    indiceGraphCourant--;
 
                     // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
                     if (fenetreGraph.isFullScreen()) {
-                        fenetreGraph.restoreWindow();
+                        fenetreGraph.restaurerFenetre();
                     }
 
                     // Afficher le graphique courant
@@ -686,7 +686,7 @@ public class Fenetre extends JFrame {
         });
 
         // Ajouter un ActionListener pour le bouton Suivant de FenetreGraph
-        fenetreGraph.addNextButtonListener(new ActionListener() {
+        fenetreGraph.addSuivButtonListener(new ActionListener() {
             /**
             * permet de passer au graph suivant
             * @author tom
@@ -694,13 +694,13 @@ public class Fenetre extends JFrame {
             */
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (currentGraphIndex < graphes.size() - 1) {
+                if (indiceGraphCourant < graphes.size() - 1) {
                     // Incrémenter l'index du graphique courant
-                    currentGraphIndex++;
+                    indiceGraphCourant++;
 
                     // Vérifier si FenetreGraph est en mode plein écran et le restaurer si nécessaire
                     if (fenetreGraph.isFullScreen()) {
-                        fenetreGraph.restoreWindow();
+                        fenetreGraph.restaurerFenetre();
                     }
 
                     // Afficher le graphique courant

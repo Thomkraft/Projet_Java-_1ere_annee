@@ -35,7 +35,7 @@ public class VolPainter {
      * @param start La position géographique de départ du vol
      * @param end La position géographique d'arrivée du vol
      */
-    public void setFlight(GeoPosition start, GeoPosition end) {
+    public void setVol(GeoPosition start, GeoPosition end) {
         cheminVols.clear(); // Effacer les trajets précédents
 
         CheminVol cheminVol = new CheminVol(start, end);
@@ -47,7 +47,7 @@ public class VolPainter {
      * @author tom
      * @return Une liste de FlightPath représentant les trajets de vol
      */
-    public List<CheminVol> getFlightPaths() {
+    public List<CheminVol> getCheminVols() {
         return cheminVols;
     }
 
