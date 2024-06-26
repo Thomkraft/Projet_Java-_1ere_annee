@@ -26,7 +26,7 @@ public class FenetreGraphe extends JInternalFrame {
     private boolean isFullScreen = false;
     private JFrame fullScreenFrame;
     private final Fenetre fenetre;
-    private String fileName;
+    private final String fileName;
 
     /**
      * Constructeur pour FenetreGraphe.
@@ -128,14 +128,6 @@ public class FenetreGraphe extends JInternalFrame {
         btnNext.addActionListener(listener);
     }
 
-    /**
-     * Définir le numéro du graphique affiché.
-     * @param number le numéro du graphique
-     * @author tom
-     */
-    public void setGraphNumber(int number) {
-        txtGraphNumber.setText(Integer.toString(number));
-    }
 
     /**
      * Obtenir le numéro du graphique affiché.

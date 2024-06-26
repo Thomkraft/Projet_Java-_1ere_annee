@@ -1,9 +1,9 @@
 package interfaceApplication;
 
-import stockageDonnées.Vols;
-import application.Aéroports;
-import application.FlightPainter;
-import application.WaypointWithName;
+import application.NomWaypoint;
+import stockageDonnees.Vols;
+import application.Aeroports;
+import application.VolPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.viewer.DefaultTileFactory;
@@ -28,12 +28,10 @@ import org.jxmapviewer.painter.CompoundPainter;
  */
 public class Carte extends JFrame {
     private JXMapViewer mapViewer;
-    private FlightPainter flightPainter;
-    private List<WaypointWithName> waypoints;
+    private VolPainter volPainter;
     private final JMenuItem item1 = new JMenuItem("Aeroport -> niveau des vols");
     private final JMenuItem item2 = new JMenuItem("niveau -> Lister les vols");
     private final List<Vols> listeVol;
-
     /**
      * Constructeur de la classe Carte.
      * Initialise la carte avec les aéroports, les vols et les options de visualisation.
@@ -56,7 +54,7 @@ public class Carte extends JFrame {
      */
     private void init(String cheminAeroports, String cheminTxtColo) {
         mapViewer = new JXMapViewer();
-        flightPainter = new FlightPainter();
+        volPainter = new VolPainter();
 
         // Menu
         JMenu Outils = new JMenu("Outils");
@@ -71,14 +69,14 @@ public class Carte extends JFrame {
         mapViewer.setTileFactory(tileFactory);
 
         // Récupérer les waypoints depuis Aéroports
-        waypoints = Aéroports.createWaypoints(cheminAeroports);
+        List<NomWaypoint> waypoints = Aeroports.createWaypoints(cheminAeroports);
 
         // Créer un WaypointPainter et ajouter les waypoints
-        WaypointPainter<WaypointWithName> waypointPainter = new WaypointPainter<>();
+        WaypointPainter<NomWaypoint> waypointPainter = new WaypointPainter<>();
         waypointPainter.setWaypoints(Set.copyOf(waypoints));
 
         // Créer un CompoundPainter avec le waypointPainter et le painter des trajectoires de vol
-        mapViewer.setOverlayPainter(new CompoundPainter<>(waypointPainter, flightPainter.getPainter()));
+        mapViewer.setOverlayPainter(new CompoundPainter<>(waypointPainter, volPainter.getPainter()));
 
         // Ajouter des écouteurs pour la navigation à la souris
         mapViewer.addMouseListener(new MouseAdapter() {
@@ -98,7 +96,7 @@ public class Carte extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int cmd = 1;
-                Visualisation visualisationFrame = new Visualisation(Aéroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
+                Visualisation visualisationFrame = new Visualisation(Aeroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
                 visualisationFrame.setVisible(true);
             }
         });
@@ -108,7 +106,7 @@ public class Carte extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int cmd = 2;
-                Visualisation visualisationFrame = new Visualisation(Aéroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
+                Visualisation visualisationFrame = new Visualisation(Aeroports.lireAeroports(cheminAeroports), cheminAeroports, cheminTxtColo, listeVol, cmd);
                 visualisationFrame.setVisible(true);
             }
         });
@@ -128,7 +126,7 @@ public class Carte extends JFrame {
         GeoPosition center = calculerCentre(start, end);
 
         // Ajouter le vol prédéfini en utilisant le nouveau FlightPainter
-        flightPainter.setFlight(start, end);
+        volPainter.setFlight(start, end);
 
         // Centrer la carte sur le centre calculé
         mapViewer.setAddressLocation(center);

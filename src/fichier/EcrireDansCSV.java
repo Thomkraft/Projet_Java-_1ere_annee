@@ -20,9 +20,9 @@ import org.graphstream.graph.Graph;
  */
 public class EcrireDansCSV {
     
-    private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
-    private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
-    private Fenetre fen;
+    private final ArrayList<String> listLastColoFileUpdates;
+    private final ArrayList<Graph> listLastGraphColo;
+    private final Fenetre fen;
 
     /**
      * Constructeur de la class WriteInTxt et initialise les attributs
@@ -50,7 +50,7 @@ public class EcrireDansCSV {
      * @throws IOException si erreur d'entrée sortis / utilise le nom de fichier par default si erreur
      */
     public void EcrireDernierCSVFichierColo(String path) throws IOException{
-        boolean csvCréé = false;
+        boolean csvCree = false;
         
         int i = 0;
         
@@ -58,16 +58,16 @@ public class EcrireDansCSV {
         
         String Valeur = JOptionPane.showInputDialog(fen, "Entrez le nom de votre fichier (coloration-groupe2.Y par defaut) :");
         
-        if (Valeur.length() >= 1) {
+        if (!Valeur.isEmpty()) {
             NomFichier = Valeur;
         }
         
         for (Graph g: listLastGraphColo){
-            CSVWriter writer = null;
+            CSVWriter writer;
             
-            if (!csvCréé){
+            if (!csvCree){
                     writer = new CSVWriter(new FileWriter(path + NomFichier + ".csv"));
-                    csvCréé = true;
+                    csvCree = true;
             } else {
 
                 writer = new CSVWriter(new FileWriter(path + NomFichier + ".csv", true));

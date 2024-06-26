@@ -7,15 +7,25 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 /**
+ * La classe AppCouleurs gère la coloration des sommets d'un graphe et vérifie
+ * si le nombre de couleurs utilisées dépasse un maximum donné (kmax).
+ * Les sommets du graphe sont colorés et visualisés à l'aide de la bibliothèque GraphStream.
  *
- * @author tom
- * 
+ * @author alec
  */
 public class AppCouleurs {
     private final Graph graphe;
     private final int nbCouleurs;
     private Color[] couleurs;
 
+    /**
+     * Constructeur de la classe AppCouleurs.
+     * Initialise le graphe, calcule le nombre de couleurs nécessaires,
+     * initialise les couleurs, colorie les sommets et vérifie le dépassement du kmax.
+     *
+     * @param graphe Le graphe dont les sommets doivent être colorés.
+     * @author alec
+     */
     public AppCouleurs(Graph graphe) {
         this.graphe = graphe;
         nbCouleurs = nombreCouleurs();
@@ -25,6 +35,11 @@ public class AppCouleurs {
         testDepassementKmax();
     }
 
+    /**
+     * Initialise le tableau des couleurs en utilisant des nuances de couleurs différentes.
+     *
+     * @author alec
+     */
     public void initialiserCouleurs() {
         // Initialisation du nombre de couleurs
         couleurs = new Color[nbCouleurs];
@@ -34,6 +49,13 @@ public class AppCouleurs {
         }
     }
 
+    /**
+     * Colorie visuellement les sommets du graphe en fonction de l'attribut "couleur" de chaque sommet.
+     * Ajoute également un label pour numéroter les sommets.
+     * Gère les exceptions lorsque des sommets n'ont pas de couleur attribuée.
+     *
+     * @author alec
+     */
     public void colorationVisuel() {
         try {
             // Coloration des sommets
@@ -64,6 +86,12 @@ public class AppCouleurs {
         }
     }
 
+    /**
+     * Calcule le nombre de couleurs différentes utilisées dans le graphe en inspectant l'attribut "couleur" de chaque sommet.
+     *
+     * @return Le nombre de couleurs différentes utilisées dans le graphe.
+     * @author alec
+     */
     private int nombreCouleurs() {
         ArrayList<Integer> couleursSommets = new ArrayList<>();
         int nbCouleurs = 0;
@@ -79,6 +107,12 @@ public class AppCouleurs {
         return nbCouleurs;
     }
 
+    /**
+     * Vérifie si le nombre de couleurs utilisées dépasse le kmax donné dans le graphe.
+     * Si c'est le cas, met à jour le kmax du graphe et affiche un message dans la console.
+     *
+     * @author alec
+     */
     private void testDepassementKmax() {
         // Affichage dans la console si dépassement du kmax donné dans le fichier de test
         int kmaxGraphe = graphe.getAttribute("kmax");

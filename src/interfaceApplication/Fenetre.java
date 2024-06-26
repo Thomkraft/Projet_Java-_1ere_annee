@@ -4,10 +4,10 @@ import fichier.OuvrirCsv;
 import fichier.OuvrirTxt;
 import fichier.EcrireDansCSV;
 import fichier.EcrireDansTxt;
-import stockageDonnées.StockageAeroports;
-import stockageDonnées.Colisions;
-import stockageDonnées.Vols;
-import application.ChargerGraph;
+import stockageDonnees.StockageAeroports;
+import stockageDonnees.Colisions;
+import stockageDonnees.Vols;
+import application.ChargerGraphe;
 import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -50,8 +50,8 @@ public class Fenetre extends JFrame {
     private int currentGraphIndex = 0;
     private List<Graph> graphes;
     private List<String> fileNames;
-    private List<Vols> listeVol = new ArrayList();
-    private List<Vols> listeVolPourCarte = new ArrayList();
+    private List<Vols> listeVol = new ArrayList<>();
+    private List<Vols> listeVolPourCarte = new ArrayList<>();
 
     private String fichierAeroport = null;
     private StringBuilder fileVolPaths = new StringBuilder();
@@ -69,7 +69,7 @@ public class Fenetre extends JFrame {
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -277,13 +277,14 @@ public class Fenetre extends JFrame {
         });
         
         btnImportGraph.addActionListener(new ActionListener() {
-            @Override
+
             /**
              * Action à réaliser lors du clic sur le bouton "Importer Graph".
              * Ouvre une fenêtre de dialogue pour sélectionner le fichier de graph.
              * @author tom/thomas
              * @param e l'événement de clic
              */
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -300,7 +301,7 @@ public class Fenetre extends JFrame {
                     }
 
                     // Coloration du ou des graphes
-                    List<Graph> graphes = ChargerGraph.charger_graphes(filePaths);
+                    List<Graph> graphes = ChargerGraphe.charger_graphes(filePaths);
                     
                     
                     EcrireDansTxt txtWriter = new EcrireDansTxt();
@@ -347,7 +348,6 @@ public class Fenetre extends JFrame {
                     }
                     
                     System.out.println("Vols Chargés :");
-                    int i = 0;
                     for(Vols vol : listeVolPourCarte) {
                         System.out.println(vol);
                     }
@@ -382,30 +382,32 @@ public class Fenetre extends JFrame {
                 listeVol = null;
                 listeVolPourCarte = new ArrayList<>();
                 
-                List<String> listeColisionVol = new ArrayList<>();
+                ArrayList<String> listeColisionVol = new ArrayList<>();
                 List<StockageAeroports> listeAeroport = null;
                 
-                List<String> listeFichierErroné = new ArrayList<>();
+                List<String> listeFichierErrone = new ArrayList<>();
                 try {
-                    listeAeroport = ouvrirTxt.LectureTxtAéroports(fichierAeroport);
+                    listeAeroport = ouvrirTxt.LectureTxtAeroports(fichierAeroport);
                     if(listeAeroport == null) {
                         throw new Exception();
                     }
 
-                } catch (IOException ex) {
+                } catch (IOException | CsvValidationException ex) {
                     Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (CsvValidationException ex) {
-                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(Fenetre.this, "Mauvais format pour le fichier d'aéroport !","Erreur", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(Fenetre.this, "Mauvais format pour le fichier d'aéroport !","Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
                 try {
                     if (Integer.parseInt(txtKmax.getText()) <= 0){
                         lecteurTxt.setkMax(1);
-                    }else {
+
+                    } else {
                         lecteurTxt.setkMax(Integer.parseInt(txtKmax.getText()));
                     }
+
                 }catch (NumberFormatException ex) {
                     lecteurTxt.setkMax(1);
                 }
@@ -414,7 +416,7 @@ public class Fenetre extends JFrame {
                 String[] nomFichierResultat;
                 //Boucle pour comparer chaque vols a tous les vols
                 //tous les fichiers
-                boolean traité = false;
+                boolean traite = false;
                 for(int k = 0; k <= separationCheminVol.length-1; k++){
                     file = separationCheminVol[k];
                     nomFichierResultat = file.split("-");
@@ -426,18 +428,16 @@ public class Fenetre extends JFrame {
                             throw new Exception();
                         }
 
+                    } catch (IOException | CsvValidationException ex) {
+                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
 
-                    } catch (IOException ex) {
-                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (CsvValidationException ex) {
-                        Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (Exception ex) {
                         String[] separation = file.split("\\\\");
-                        listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
-                        //txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                        listeFichierErrone.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         continue;
                     }
-                    if (!traité){
+
+                    if (!traite){
                         int marge = 15;
                         try {
                             String reponse = JOptionPane.showInputDialog(null, "Donnez la marge pour colisions (15 minutes si rien n'est modifié ou erreur de format) : ", "Changement marge de colision", JOptionPane.QUESTION_MESSAGE);
@@ -451,7 +451,7 @@ public class Fenetre extends JFrame {
                         } catch (NumberFormatException ex) {
                             colision.setMarge(marge);
                         }
-                        traité = true;
+                        traite = true;
                     }
                         
                     for(int i = 0; i < listeVol.size() ;  i++){
@@ -469,7 +469,7 @@ public class Fenetre extends JFrame {
 
 
                     try {
-                        lecteurTxt.ecritureDansFichier("ColisionVol-" + nomFichier, (ArrayList<String>) listeColisionVol, Vols.nbVols, lecteurTxt.getkMax());
+                        lecteurTxt.ecritureDansFichier("ColisionVol-" + nomFichier, listeColisionVol, Vols.nbVols, lecteurTxt.getkMax());
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -486,17 +486,17 @@ public class Fenetre extends JFrame {
                     
                 }
 
-                StringBuilder fichierErronnéMessage = new StringBuilder();
+                StringBuilder fichierErronneMessage = new StringBuilder();
                 
-                for (String message: listeFichierErroné) {
-                    fichierErronnéMessage.append(message).append("\n");
+                for (String message: listeFichierErrone) {
+                    fichierErronneMessage.append(message).append("\n");
                 }
-                if (!fichierErronnéMessage.toString().equals("")){
-                    JOptionPane.showMessageDialog(Fenetre.this, fichierErronnéMessage, "Erreur", JOptionPane.ERROR_MESSAGE);
+                if (!fichierErronneMessage.toString().isEmpty()){
+                    JOptionPane.showMessageDialog(Fenetre.this, fichierErronneMessage, "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
                 
                 System.out.println("------------------");
-                ArrayList<String> listPathFileUpdated = new ArrayList<>();
+                ArrayList<String> listPathFileUpdated;
 
                 listPathFileUpdated = (ArrayList<String>) lecteurTxt.getlistDernierFichierMAJ();
 
@@ -512,7 +512,7 @@ public class Fenetre extends JFrame {
                 }
                 
                 // Coloration du ou des graphes
-                List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
+                List<Graph> graphes = ChargerGraphe.charger_graphes(listPathFileUpdated);
                 lecteurTxt = new EcrireDansTxt();
                 try {
                     
@@ -583,15 +583,6 @@ public class Fenetre extends JFrame {
         return fileNames.get(index);
         
     }
-    
-    /**
-    * Retourne l'index du graphique courant.
-    * 
-    * @author tom
-    */
-    public int getCurrentGraphIndex() {
-        return currentGraphIndex;
-    }
 
     /**
     * Affiche le graphique courant dans le panneau graphique.
@@ -623,7 +614,7 @@ public class Fenetre extends JFrame {
             fenetreGraph.setMaximum(true);
         } catch (Exception e) {
             // Gérer toute exception qui pourrait survenir lors de la définition de la taille maximale
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         // Valider et rafraîchir graphPanel pour refléter les changements

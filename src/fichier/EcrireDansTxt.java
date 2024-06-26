@@ -1,7 +1,5 @@
 package fichier;
 
-import stockageDonnées.Vols;
-import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import scala.actors.threadpool.Arrays;
 
 /**
  *CLass EcrireDansTxt pour écrire dans un fichier texte les infos comme 
@@ -21,45 +18,9 @@ import scala.actors.threadpool.Arrays;
  */
 public class EcrireDansTxt {
     private int kMaximum = -1;
-    private ArrayList<String> listDernierFichierMAJ = new ArrayList<>();
+    private final ArrayList<String> listDernierFichierMAJ = new ArrayList<>();
     private ArrayList<String> listDernierColoFileMAJ = new ArrayList<>();
     private ArrayList<Graph> listDernierGraphColoMAJ = new ArrayList<>();
-    
-    /**
-     * Crée un dossier ResultatsColisions a la racine du projet si il n'existe pas deja
-     * 
-     * @author thomas
-     */
-    public static void createResultatsColisionsDirectory() {
-        File chemin = new File("./ResultatsColisions");
-        if (!chemin.exists()) {
-            if (chemin.mkdir()) {
-                System.out.println("Répertoire ResultatsColisions créé avec succès.");
-            } else {
-                System.out.println("Erreur lors de la création du répertoire ResultatsColisions.");
-            }
-        } else {
-            System.out.println("Le répertoire ResultatsColisions existe déjà.");
-        }
-    }
-    
-    /**
-     * Crée un fichier txt avec le nom spécifié dans le répertoire "ResultatsColisions".
-     * 
-     * @author thomas
-     * 
-     * @param nomFichier le nom du fichier à créer
-     * @throws IOException si une erreur d'entrée/sortie se produit
-     */
-    public static void créationFichier(String nomFichier) throws IOException {
-        File monFichier = new File("./ResultatsColisions/" + nomFichier + ".txt");
-        
-        if(monFichier.createNewFile()){
-            System.out.println("Fichier " + nomFichier + ".txt créé avec succès dans ResultatsColisions.");
-        } else {
-            System.out.println("Le fichier " + nomFichier + ".txt existe déjà dans ResultatsColisions.");
-        }
-    }
 
     /**
      * Écrit les résultats de la coloration des graphes dans des fichiers dans le répertoire "ResultatColoration".
@@ -123,9 +84,9 @@ public class EcrireDansTxt {
                 public int compare(Node n1, Node n2) {
                     String s1 = n1.toString();
                     String s2 = n2.toString();
-                    
+
                     int i1 = 0, i2 = 0;
-                    
+
                     while (i1 < s1.length() && i2 < s2.length()) {
                         char c1 = s1.charAt(i1);
                         char c2 = s2.charAt(i2);
@@ -158,7 +119,7 @@ public class EcrireDansTxt {
                     return s1.length() - s2.length();
                 }
 
-                
+
             }); 
             
             for (Node node : nodes) {
@@ -225,7 +186,7 @@ public class EcrireDansTxt {
         // Écriture dans le fichier
         FileWriter monFichier = new FileWriter(cheminFichier);
         monFichier.write(Integer.toString(kMax));
-        monFichier.write("\n" + Integer.toString(nbVols));
+        monFichier.write("\n" + nbVols);
         for(String value : listeColisions){
             monFichier.write("\n" + value);
         }
@@ -233,41 +194,6 @@ public class EcrireDansTxt {
         listDernierFichierMAJ.add(cheminFichier);
         
         System.out.println("Écriture réussie dans le fichier " + nomFichier + ".txt.");
-    }
-    
-    /**
-     * Écrit les données de collision et les informations des aéroports dans un fichier dans le répertoire "ResultatsColisions".
-     * 
-     * @author thomas
-     * 
-     * @param fileName le nom du fichier à créer
-     * @param listeColisions une liste de chaînes de données de collisions à écrire
-     * @param listeVols une liste d'objets Vols contenant les données de vol
-     * @param nbVols le nombre de vols
-     * @throws IOException si une erreur d'entrée/sortie se produit
-     */
-    public void ecrireDansFichierAéroport(String fileName, ArrayList<String> listeColisions, ArrayList<Vols> listeVols, int nbVols) throws IOException {
-        FileWriter monFichier = new FileWriter("./ResultatsColisions/" + fileName + ".txt");
-        
-        monFichier.write(Integer.toString(nbVols));
-        
-        for(String value : listeColisions){
-            String[] separation = value.split(" ");
-            System.out.println("Dans le write in file aeroports");
-            System.out.println(separation[0]);
-            System.out.println(separation[1]);
-            
-            String nomAeroport1Départ = listeVols.get(listeVols.indexOf(separation[0])).getAéroportDépart();
-            String nomAeroport1Arrivée = listeVols.get(listeVols.indexOf(separation[0])).getAéroportArrivée();
-            String nomAeroport2Départ = listeVols.get(listeVols.indexOf(separation[1])).getAéroportDépart();
-            String nomAeroport2Arrivée = listeVols.get(listeVols.indexOf(separation[1])).getAéroportArrivée();
-            
-            monFichier.write("\n" + nomAeroport1Départ + " " + nomAeroport1Arrivée);
-            monFichier.write("\n" + nomAeroport2Départ + " " + nomAeroport2Arrivée);
-        }
-        
-        monFichier.close();
-        System.out.println("Écriture réussie dans le fichier " + fileName + ".txt.");
     }
     
     /**
@@ -301,17 +227,6 @@ public class EcrireDansTxt {
      */
     public List<String> getlistDernierFichierMAJ() {
         return listDernierFichierMAJ;
-    }
-    
-    /**
-     * Définit la liste des derniers fichiers mis à jour.
-     * 
-     * @author thomas
-     * 
-     * @param listLastFileUpdated la liste des chemins des derniers fichiers mis à jour à définir
-     */
-    public void setlistDernierFichierMAJ(ArrayList<String> listLastFileUpdated) {
-        this.listDernierFichierMAJ = listLastFileUpdated;
     }
 
     /**

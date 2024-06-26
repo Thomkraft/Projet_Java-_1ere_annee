@@ -1,6 +1,6 @@
 package interfaceApplication;
 
-import stockageDonnées.Vols;
+import stockageDonnees.Vols;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,14 +19,14 @@ import java.util.List;
 public final class Visualisation extends JFrame {
     private JComboBox<String> aeroportComboBox;
     private JComboBox<Integer> niveauComboBox;
-    private JButton actualiserButton = new JButton("Actualiser");
+    private final JButton actualiserButton = new JButton("Actualiser");
     private JPanel visualisationPanel;
     private JTable volTable;
     private DefaultTableModel tableModel;
-    private List<Vols> listeVol;
-    private int cmd; // cmd = 1 for airport, 2 for level
-    private String cheminAeroport;
-    private List<String[]> listeAeroport;
+    private final List<Vols> listeVol;
+    private final int cmd; // cmd = 1 for airport, 2 for level
+    private final String cheminAeroport;
+    private final List<String[]> listeAeroport;
 
     /**
      * Constructeur de la fenêtre de visualisation.
@@ -157,7 +157,7 @@ public final class Visualisation extends JFrame {
             }
             return maxCouleur;
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return -1;
     }
@@ -201,7 +201,7 @@ public final class Visualisation extends JFrame {
                 System.out.println(vol);
             }
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
@@ -216,8 +216,8 @@ public final class Visualisation extends JFrame {
 
         // Parcourir la liste des vols
         for (Vols vol : listeVol) {
-            String aeroportD = vol.getAéroportDépart().trim();
-            String aeroportA = vol.getAéroportArrivée().trim();
+            String aeroportD = vol.getAeroportDepart().trim();
+            String aeroportA = vol.getAeroportDepart().trim();
             boolean found = false;
 
             // Trouver le code de l'aéroport sélectionné
@@ -253,7 +253,7 @@ public final class Visualisation extends JFrame {
         tableModel.setRowCount(0); // Vide la table avant de la remplir
         for (Vols vol : listeVol) {
             if (vol.getNiveau() == niveau) {
-                tableModel.addRow(new Object[]{vol.getNomVol(), vol.getAéroportDépart(), vol.getAéroportArrivée(), vol.getNiveau()});
+                tableModel.addRow(new Object[]{vol.getNomVol(), vol.getAeroportDepart(), vol.getAeroportArrivee(), vol.getNiveau()});
             }
         }
     }

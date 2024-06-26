@@ -4,7 +4,7 @@
  */
 package fichier;
 
-import stockageDonnées.Vols;
+import stockageDonnees.Vols;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import java.io.FileNotFoundException;
@@ -22,7 +22,7 @@ import java.util.List;
 public class OuvrirCsv {
 
     private static int nbLignes;
-    private List<Vols> listeVols;
+    private final List<Vols> listeVols;
 
     /**
      * Constructeur de la class OpenCsv
@@ -45,7 +45,7 @@ public class OuvrirCsv {
      * @throws CsvValidationException si le fichier n'est pas un CSV
      * @throws NumberFormatException Si le fichier n'est pas un .csv ou est mal formaté
      */
-    public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException, Exception{
+    public List<Vols> LectureCsvVols(String fichierCSV) throws FileNotFoundException, IOException, CsvValidationException {
         try {
             nbLignes = 0;
             CSVReader lecteur = new CSVReader(new FileReader(fichierCSV));
@@ -79,10 +79,6 @@ public class OuvrirCsv {
                 }
 
             }
-        } catch (IllegalArgumentException ex) {
-            System.err.println("Erreur : " + ex.getMessage());
-            return null;
-         
         } catch (Exception ex){
             System.err.println("Erreur : " + ex.getMessage());
             return null;
@@ -92,10 +88,4 @@ public class OuvrirCsv {
         return listeVols;
         
     }
-
-    public static int getNbLignes() {
-        return nbLignes;
-    }
-    
-
 }

@@ -40,8 +40,6 @@ public class InfosConsole {
         StyledDocument docConsole = txtConsole.getStyledDocument();
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet attributsConsole = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.RED);
-        AttributeSet attributsConsoleGreen = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.GREEN);
-
 
         try {
             // Ajout de remarques s'il y en a

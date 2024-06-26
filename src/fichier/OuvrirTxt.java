@@ -4,8 +4,7 @@
  */
 package fichier;
 
-import stockageDonnées.StockageAeroports;
-import com.opencsv.CSVReader;
+import stockageDonnees.StockageAeroports;
 import com.opencsv.exceptions.CsvValidationException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class OuvrirTxt {
     
-    private List<StockageAeroports> listeAeroports;
+    private final List<StockageAeroports> listeAeroports;
     
     /**
      * Constructeur pour la class OpenTxt qui initialise la liste d'aéroports
@@ -38,9 +37,8 @@ public class OuvrirTxt {
      * @return Renvoie une ArrayList contenant tous les aéroports chargés
      * @throws FileNotFoundException si le fichier n'est pas trouvé
      * @throws IOException si erreure d'entrée sortie
-     * @throws CsvValidationException
      */
-    public List<StockageAeroports> LectureTxtAéroports(String fichierTXT) throws FileNotFoundException, IOException, CsvValidationException{
+    public List<StockageAeroports> LectureTxtAeroports(String fichierTXT) throws FileNotFoundException, IOException, CsvValidationException{
         
         try {
             BufferedReader br = new BufferedReader(new FileReader(fichierTXT));

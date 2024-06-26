@@ -5,9 +5,6 @@ import org.graphstream.graph.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -15,7 +12,7 @@ import java.util.Iterator;
  * L'algorithme colore un graphe de manière à ce que deux nœuds adjacents n'aient pas la même couleur
  * et tente de minimiser le nombre de couleurs utilisées.
  *
- * @author Alec Petit-Siejak
+ * @author alec
  */
 public class ColoDSatur {
     // Attributs
@@ -26,6 +23,7 @@ public class ColoDSatur {
      * Construit un objet {@code ColoDSatur} et lance le processus de coloration du graphe.
      *
      * @param graphe le graphe à colorier
+     * @author alec
      */
     public ColoDSatur(Graph graphe) {
         this.graphe = graphe;
@@ -35,6 +33,7 @@ public class ColoDSatur {
 
     /**
      * Colore le graphe en utilisant l'algorithme DSatur.
+     * @author alec
      */
     private void colorerGraphe() {
         // Tri des sommets selon la valeur décroissante de leur degré dans la liste listeSommets
@@ -47,7 +46,6 @@ public class ColoDSatur {
         }
 
         // Coloration fictive du premier sommet de degré maximum avec la première couleur
-        //listeSommets.getFirst()
         listeSommets.get(0).setAttribute("couleur", 0);
         ajoutSommetColorie(listeSommets.get(0));
 
@@ -115,6 +113,7 @@ public class ColoDSatur {
      * Vérifie si le graphe est entièrement colorié.
      *
      * @return {@code true} si le graphe est colorié, {@code false} sinon
+     * @author alec
      */
     private boolean estGrapheColorie() {
         return listeSommets.isEmpty();
@@ -122,6 +121,7 @@ public class ColoDSatur {
 
     /**
      * Attribue les valeurs DSAT à chaque sommet.
+     * @author alec
      */
     private void attributionDSATSommets() {
         ArrayList<Integer> couleursUtilisees = new ArrayList<>();
@@ -154,6 +154,7 @@ public class ColoDSatur {
      * Sélectionne le sommet avec la valeur DSAT maximale.
      *
      * @return le sommet avec la valeur DSAT la plus élevée
+     * @author alec
      */
     private Node sommetDSATMax() {
         Node sommetDsatMax = listeSommets.getFirst();
@@ -172,6 +173,7 @@ public class ColoDSatur {
      * Supprime le sommet colorié de la liste des sommets non coloriés.
      *
      * @param sommetColorie le sommet qui a été colorié
+     * @author alec
      */
     private void ajoutSommetColorie(Node sommetColorie) {
         // Suppression du sommet de la liste des sommets
@@ -193,6 +195,7 @@ public class ColoDSatur {
      * @param sommetChoisi le sommet à colorier
      * @param kmax le nombre maximal de couleurs autorisées
      * @return la couleur la moins fréquente parmi les nœuds adjacents
+     * @author alec
      */
     private int couleurDepassementKmax(Node sommetChoisi, int kmax) {
         // Initialisation d'une ArrayList du nombre de couleurs pour chaque couleurs adjacentes
@@ -228,6 +231,7 @@ public class ColoDSatur {
      * Calcule le nombre de conflits dans le graphe colorié.
      *
      * @return le nombre de conflits
+     * @author alec
      */
     private int nombreConflits() {
         int nbConflits = 0;
