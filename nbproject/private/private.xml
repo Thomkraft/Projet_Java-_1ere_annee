@@ -2,6 +2,25 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/application/Aeroports.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/stockageDonnees/StockageAeroports.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/stockageDonnees/Colisions.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/application/ChargerGraphe.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/fichier/EcrireDansTxt.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/coloration/TriSommets.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/fichier/EcrireDansCSV.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/interfaceApplication/FenetreGraphe.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/interfaceApplication/InfosConsole.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/coloration/AppCouleurs.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/coloration/ColoDSatur.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/interfaceApplication/Carte.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/interfaceApplication/Fenetre.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/interfaceApplication/Visualisation.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/application/Main.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/stockageDonnees/Vols.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/fichier/OuvrirCsv.java</file>
+            <file>file:/C:/Users/thoma/Documents/IUT/1ère_année/2-semestre/20-Sae-crash-presquefinalisé/projet_crash/src/fichier/OuvrirTxt.java</file>
+        </group>
     </open-files>
 </project-private>

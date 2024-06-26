@@ -126,7 +126,7 @@ public class EcrireDansTxt {
                 Object couleur = node.getAttribute("couleur");
                 String couleurString = couleur.toString();
                 int intCouleur = Integer.parseInt(couleurString) + 1;
-                lecteurFichier.write(node + " ; " + intCouleur + "\n");
+                lecteurFichier.write(node + ";" + intCouleur + "\n");
             }
             
            } else {
@@ -135,7 +135,7 @@ public class EcrireDansTxt {
                     Object couleur = g.getNode(i).getAttribute("couleur");
                     String couleurString = couleur.toString();
                     int intCouleur = Integer.parseInt(couleurString) + 1;
-                    lecteurFichier.write(g.getNode(i) + " ; " + intCouleur +"\n");
+                    lecteurFichier.write(g.getNode(i) + ";" + intCouleur +"\n");
                 }
            }
             

@@ -59,6 +59,8 @@ public class Fenetre extends JFrame {
     private ArrayList<String> listLastColoFileUpdates = new ArrayList<>();
     private ArrayList<Graph> listLastGraphColo = new ArrayList<>();
 
+    private ArrayList<Double> degreeMoyen;
+    
     /**
      * Constructeur de la classe Fenetre.
      * Initialise l'interface graphique et les écouteurs d'événements.
@@ -385,6 +387,8 @@ public class Fenetre extends JFrame {
                 ArrayList<String> listeColisionVol = new ArrayList<>();
                 List<StockageAeroports> listeAeroport = null;
                 
+                degreeMoyen = null;
+                
                 List<String> listeFichierErrone = new ArrayList<>();
                 try {
                     listeAeroport = ouvrirTxt.LectureTxtAeroports(fichierAeroport);
@@ -470,6 +474,8 @@ public class Fenetre extends JFrame {
 
                     try {
                         lecteurTxt.ecritureDansFichier("ColisionVol-" + nomFichier, listeColisionVol, Vols.nbVols, lecteurTxt.getkMax());
+                        
+                        
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }

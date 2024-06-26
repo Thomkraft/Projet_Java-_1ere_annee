@@ -81,6 +81,10 @@ public class ChargerGraphe {
                     graph.addNode(Integer.toString(graph.getNodeCount()));
                 }
                 
+                
+                double degreMoyen = calculerDegreMoyen(nbSommets, nbArretes);
+                graph.addAttribute("degreMoyen", degreMoyen);
+                
             } catch (IOException | EdgeRejectedException e) {
                 String txtErreur = "Erreur : " + e.getMessage();
                 System.err.println(txtErreur);
@@ -100,5 +104,12 @@ public class ChargerGraphe {
         }
 
         return graphes;
+    }
+    
+    private static double calculerDegreMoyen(int nbSommets, int nbArretes) {
+        if (nbSommets == 0) {
+            return 0;
+        }
+        return (double) (2 * nbArretes) / nbSommets;
     }
 }

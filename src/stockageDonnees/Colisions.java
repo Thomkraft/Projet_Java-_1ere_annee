@@ -185,25 +185,7 @@ public class Colisions {
         this.marge = marge;
     }
     
-    public double averageDegree(List<String> listeColisions) {
-        
-        Map<String, Integer> degreeMap = new HashMap<>();
-        
-        if(listeColisions.isEmpty()){
-            return 0;
-        }
-        
-        for (String value:listeColisions){
-            String[] separation = value.split(" ");
-            
-            degreeMap.put(separation[0], degreeMap.getOrDefault(separation[0], 0) + 1);
-            degreeMap.put(separation[1], degreeMap.getOrDefault(separation[1], 0) + 1);
-            
-        }
-        int size = degreeMap.size();
-
-        return (double) nbColisions * 2 / size;
-    }
+   
 
     public void setNbColisions(int nbColisions) {
         this.nbColisions = nbColisions;
