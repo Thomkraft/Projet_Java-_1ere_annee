@@ -1,4 +1,4 @@
-package Interface;
+package interfaceApplication;
 
 import org.graphstream.graph.Graph;
 

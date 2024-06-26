@@ -1,12 +1,12 @@
-package Interface;
+package interfaceApplication;
 
-import File.OuvrirCsv;
-import File.OpenTxt;
-import File.EcrireDansCSV;
-import File.EcrireDansTxt;
-import Stockage.StockageAeroports;
-import Stockage.Colisions;
-import Stockage.Vols;
+import fichier.OuvrirCsv;
+import fichier.OuvrirTxt;
+import fichier.EcrireDansCSV;
+import fichier.EcrireDansTxt;
+import stockageDonnées.StockageAeroports;
+import stockageDonnées.Colisions;
+import stockageDonnées.Vols;
 import application.ChargerGraph;
 import com.opencsv.exceptions.CsvValidationException;
 import java.awt.*;
@@ -313,6 +313,8 @@ public class Fenetre extends JFrame {
                     }
                     
                     Fenetre.this.afficherGraphes(graphes, fileNames);
+                    
+                    System.out.println("-------------------------------------------------------------------------");
                 }
             }
         });
@@ -371,16 +373,12 @@ public class Fenetre extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Traiter les fichiers et utiliser kmax si spécifié
-
-
                 String file;
-                //String file2 = "C:\\Users\\thoma\\Documents\\IUT\\1ère_année\\2-semestre\\2-Sae_crash\\Data_Test_txt/aeroports.txt";
 
-
-                OuvrirCsv openCsv = new OuvrirCsv();
-                OpenTxt openTxt = new OpenTxt();
+                OuvrirCsv ouvrirCsv = new OuvrirCsv();
+                OuvrirTxt ouvrirTxt = new OuvrirTxt();
                 Colisions colision = new Colisions();
-                EcrireDansTxt txtWriter = new EcrireDansTxt();
+                EcrireDansTxt lecteurTxt = new EcrireDansTxt();
                 listeVol = null;
                 listeVolPourCarte = new ArrayList<>();
                 
@@ -389,7 +387,7 @@ public class Fenetre extends JFrame {
                 
                 List<String> listeFichierErroné = new ArrayList<>();
                 try {
-                    listeAeroport = openTxt.LectureTxtAéroports(fichierAeroport);
+                    listeAeroport = ouvrirTxt.LectureTxtAéroports(fichierAeroport);
                     if(listeAeroport == null) {
                         throw new Exception();
                     }
@@ -400,32 +398,30 @@ public class Fenetre extends JFrame {
                     Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(Fenetre.this, "Mauvais format pour le fichier d'aéroport !","Erreur", JOptionPane.OK_OPTION);
-                    System.err.println("Mauvais format pour le fichier d'aéroport !");
                     return;
                 }
                 try {
                     if (Integer.parseInt(txtKmax.getText()) <= 0){
-                        txtWriter.setkMax(1);
+                        lecteurTxt.setkMax(1);
                     }else {
-                        txtWriter.setkMax(Integer.parseInt(txtKmax.getText()));
+                        lecteurTxt.setkMax(Integer.parseInt(txtKmax.getText()));
                     }
                 }catch (NumberFormatException ex) {
-                    txtWriter.setkMax(1);
+                    lecteurTxt.setkMax(1);
                 }
 
-                String[] separationVolPath = fileVolPaths.toString().split(";");
-                String[] resultFileName;
+                String[] separationCheminVol = fileVolPaths.toString().split(";");
+                String[] nomFichierResultat;
                 //Boucle pour comparer chaque vols a tous les vols
                 //tous les fichiers
                 boolean traité = false;
-                for(int k = 0; k <= separationVolPath.length-1; k++){
-                    file = separationVolPath[k];
-                    resultFileName = file.split("-");
-                    String fileName = resultFileName[resultFileName.length-1];
+                for(int k = 0; k <= separationCheminVol.length-1; k++){
+                    file = separationCheminVol[k];
+                    nomFichierResultat = file.split("-");
+                    String nomFichier = nomFichierResultat[nomFichierResultat.length-1];
 
                     try {
-                        listeVol = openCsv.LectureCsvVols(file);
-                        System.out.println("Vol ajouté à la liste : " + listeVol);
+                        listeVol = ouvrirCsv.LectureCsvVols(file);
                         if (listeVol == null){
                             throw new Exception();
                         }
@@ -437,7 +433,7 @@ public class Fenetre extends JFrame {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (Exception ex) {
                         String[] separation = file.split("\\\\");
-                            listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
+                        listeFichierErroné.add("le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         //txtConsole.setText(txtConsole.getText() + "\n" + "le fichier " + separation[separation.length-1] + " n'est pas un .csv ou n'est pas formaté comme il faut !");
                         continue;
                     }
@@ -473,16 +469,11 @@ public class Fenetre extends JFrame {
 
 
                     try {
-                        txtWriter.ecritureDansFichier("ColisionVol-" + fileName, (ArrayList<String>) listeColisionVol, Vols.nbVols, txtWriter.getkMax());
+                        lecteurTxt.ecritureDansFichier("ColisionVol-" + nomFichier, (ArrayList<String>) listeColisionVol, Vols.nbVols, lecteurTxt.getkMax());
                     } catch (IOException ex) {
                         Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    /*
-                    System.out.println("-----------------------------------------------------------------------");
-                    System.out.println("Fichier : " + file);
-                    System.out.println("Nombre de colisions : " + colision.nbColisions);
-                    System.out.println("nombre de vols : " + Vols.nbVols);
-                    */
+
                     for(Vols vol : listeVol) {
                         listeVolPourCarte.add(vol);
                     }
@@ -506,39 +497,36 @@ public class Fenetre extends JFrame {
                 
                 System.out.println("------------------");
                 ArrayList<String> listPathFileUpdated = new ArrayList<>();
-                int m = 1;
-                listPathFileUpdated = (ArrayList<String>) txtWriter.getlistDernierFichierMAJ();
 
-                for(String path: listPathFileUpdated){
-                    System.out.println("Fichier "+ m + " : " + path);
-                    m++;
-                }
-                
-                
-                ArrayList<String> fileNames = new ArrayList<>();
+                listPathFileUpdated = (ArrayList<String>) lecteurTxt.getlistDernierFichierMAJ();
+
 
                 
-                for (String lastFile : listPathFileUpdated) {
-                    String[] separation = lastFile.split("\\\\");
-                    fileNames.add(separation[separation.length-1]);
+                ArrayList<String> listNomFichier = new ArrayList<>();
+
+                
+                for (String dernierFichier : listPathFileUpdated) {
+                    String[] separation = dernierFichier.split("\\\\");
+                    listNomFichier.add(separation[separation.length-1]);
                     
                 }
                 
                 // Coloration du ou des graphes
                 List<Graph> graphes = ChargerGraph.charger_graphes(listPathFileUpdated);
-                txtWriter = new EcrireDansTxt();
+                lecteurTxt = new EcrireDansTxt();
                 try {
                     
-                    txtWriter.ecrireDansFichierResultatColoration(graphes);
-                    listLastColoFileUpdates = txtWriter.getlistDernierColoFileMAJ();
-                    listLastGraphColo = txtWriter.getListDernierGraphColoMAJ();
+                    lecteurTxt.ecrireDansFichierResultatColoration(graphes);
+                    listLastColoFileUpdates = lecteurTxt.getlistDernierColoFileMAJ();
+                    listLastGraphColo = lecteurTxt.getListDernierGraphColoMAJ();
                     
                 } catch (IOException ex) {
                     System.out.println("erreur");
                 }
                 
-                Fenetre.this.afficherGraphes(graphes, fileNames);
-
+                Fenetre.this.afficherGraphes(graphes, listNomFichier);
+                    
+                System.out.println("-------------------------------------------------------------------------");
                 
         }
         });

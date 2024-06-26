@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package File;
+package fichier;
 
-import Interface.Fenetre;
+import interfaceApplication.Fenetre;
 import com.opencsv.CSVWriter;
 import java.io.FileWriter;
 import java.io.IOException;

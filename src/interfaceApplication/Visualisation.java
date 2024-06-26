@@ -1,6 +1,6 @@
-package Interface;
+package interfaceApplication;
 
-import Stockage.Vols;
+import stockageDonnées.Vols;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

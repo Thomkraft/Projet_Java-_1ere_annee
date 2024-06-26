@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package File;
+package fichier;
 
-import Stockage.StockageAeroports;
+import stockageDonnées.StockageAeroports;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import java.io.BufferedReader;
@@ -15,18 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class OpenTxt pour ouvrir les fichiers texte d'aéroports 
+ * Class OuvrirTxt pour ouvrir les fichiers texte d'aéroports 
  * 
  * @author thoma
  */
-public class OpenTxt {
+public class OuvrirTxt {
     
     private List<StockageAeroports> listeAeroports;
     
     /**
      * Constructeur pour la class OpenTxt qui initialise la liste d'aéroports
      */
-    public OpenTxt(){
+    public OuvrirTxt(){
         
         listeAeroports = new ArrayList<>();
     }

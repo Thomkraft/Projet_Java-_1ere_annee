@@ -1,6 +1,6 @@
 package application;
 
-import Interface.Fenetre;
+import interfaceApplication.Fenetre;
 
 /**
  * La classe principale `Main` est responsable de démarrer l'application de visualisation de cartes et de graphes.

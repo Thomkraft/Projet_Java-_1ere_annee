@@ -1,6 +1,6 @@
-package Interface;
+package interfaceApplication;
 
-import Stockage.Vols;
+import stockageDonnées.Vols;
 import application.Aéroports;
 import application.FlightPainter;
 import application.WaypointWithName;
