@@ -11,24 +11,30 @@ import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
 
 /**
- *
- * @author tom,alec
- * 
+ * Fenetre contenant les graphs
+ * @author tom, alec
  */
 public class FenetreGraphe extends JInternalFrame {
-    private Viewer viewer;
-    private DefaultView view;
-    private JButton btnMoins = new JButton("-");
-    private JButton btnPlus = new JButton("+");
-    private JButton btEcran = new JButton("Agrandir");
-    private JButton btnPrevious = new JButton("<");
-    private JButton btnNext = new JButton(">");
-    private JTextField txtGraphNumber = new JTextField(3);
+    private final Viewer viewer;
+    private final DefaultView view;
+    private final JButton btnMoins = new JButton("-");
+    private final JButton btnPlus = new JButton("+");
+    private final JButton btEcran = new JButton("Agrandir");
+    private final JButton btnPrevious = new JButton("<");
+    private final JButton btnNext = new JButton(">");
+    private final JTextField txtGraphNumber = new JTextField(3);
     private boolean isFullScreen = false;
     private JFrame fullScreenFrame;
-    private Fenetre fenetre;
+    private final Fenetre fenetre;
     private String fileName;
 
+    /**
+     * Constructeur pour FenetreGraphe.
+     * @param graph le graphique à afficher
+     * @param fenetre la fenêtre parente
+     * @param fileName le nom du fichier
+     * @author tom
+     */
     public FenetreGraphe(Graph graph, Fenetre fenetre, String fileName) {
         super(fileName, false, false, false, false);
         this.fenetre = fenetre;
@@ -48,25 +54,25 @@ public class FenetreGraphe extends JInternalFrame {
         this.setResizable(true);
     }
 
+    /**
+     * Maximiser la fenêtre pour qu'elle prenne tout l'écran.
+     * @author tom
+     */
     private void maximizeWindow() {
         if (!isFullScreen) {
             isFullScreen = true;
             btEcran.setText("Retrecir");
 
-            // Cacher la fenêtre actuelle
             setVisible(false);
 
-            // Créer une nouvelle fenêtre en plein écran
             fullScreenFrame = new JFrame();
             fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             fullScreenFrame.setUndecorated(true);
             fullScreenFrame.setLayout(new BorderLayout());
             fullScreenFrame.add(view, BorderLayout.CENTER);
 
-            // Ajouter les boutons au panneau de contrôle du mode plein écran
             afficherBoutons(fullScreenFrame.getContentPane());
 
-            // Ajouter un écouteur pour restaurer la fenêtre normale lorsque la fenêtre en mode plein écran est fermée
             fullScreenFrame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -78,37 +84,65 @@ public class FenetreGraphe extends JInternalFrame {
         }
     }
 
+    /**
+     * Restaurer la fenêtre à sa taille normale après avoir été en plein écran.
+     * @author tom
+     */
     public void restoreWindow() {
         if (isFullScreen) {
             isFullScreen = false;
             btEcran.setText("Agrandir");
 
-            // Fermer la fenêtre en mode plein écran
             fullScreenFrame.dispose();
 
-            // Afficher la fenêtre FenetreGraph
             setVisible(true);
 
             fenetre.afficherGraphiqueCourant();
         }
     }
 
+    /**
+     * Ajouter un écouteur d'action au bouton précédent.
+     * @param listener l'écouteur d'action à ajouter
+     * @author tom
+     */
     public void addPrecButtonListener(ActionListener listener) {
         btnPrevious.addActionListener(listener);
     }
 
+    /**
+     * Ajouter un écouteur d'action au champ de texte de l'indice de graphique.
+     * @param listener l'écouteur d'action à ajouter
+     * @author tom
+     */
     public void addIndiceTxtListener(ActionListener listener) {
         txtGraphNumber.addActionListener(listener);
     }
 
+    /**
+     * Ajouter un écouteur d'action au bouton suivant.
+     * @param listener l'écouteur d'action à ajouter
+     * @author tom
+     */
     public void addNextButtonListener(ActionListener listener) {
         btnNext.addActionListener(listener);
     }
 
+    /**
+     * Définir le numéro du graphique affiché.
+     * @param number le numéro du graphique
+     * @author tom
+     */
     public void setGraphNumber(int number) {
         txtGraphNumber.setText(Integer.toString(number));
     }
 
+    /**
+     * Obtenir le numéro du graphique affiché.
+     * @return le numéro du graphique
+     * @author tom
+     * @throws NumberFormatException si le texte n'est pas un nombre valide
+     */
     public int getGraphNumber() {
         try {
             return Integer.parseInt(txtGraphNumber.getText());
@@ -117,16 +151,30 @@ public class FenetreGraphe extends JInternalFrame {
         }
     }
 
+    /**
+     * Vérifier si la fenêtre est en plein écran.
+     * @return true si la fenêtre est en plein écran, sinon false
+     * @author tom
+     */
     public boolean isFullScreen() {
         return isFullScreen;
     }
 
+    /**
+     * Définir l'indice du graphique affiché.
+     * @param index l'indice du graphique
+     * @author tom
+     */
     public void setGraphIndex(int index) {
         txtGraphNumber.setText(Integer.toString(index));
     }
 
+    /**
+     * Afficher les boutons de contrôle sur le conteneur donné.
+     * @param container le conteneur sur lequel afficher les boutons
+     * @author tom
+     */
     private void afficherBoutons(Container container) {
-        // Ajout des ActionListeners pour les boutons Zoom moins et Zoom plus
         btnMoins.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
