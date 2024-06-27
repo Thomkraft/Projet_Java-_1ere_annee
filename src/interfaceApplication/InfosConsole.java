@@ -74,8 +74,8 @@ public class InfosConsole {
             ConnectedComponents cc = new ConnectedComponents();
             cc.init(g);
             
-            String InfoSurLeGrapheColision = "Degés Moyen : " + g.getAttribute("degreMoyen") + " | " +
-                    "Nombres de Composant : " + cc.getConnectedComponentsCount() + " | " +
+            String InfoSurLeGrapheColision = "Degré Moyen : " + g.getAttribute("degreMoyen") + " | " +
+                    "Nombre de Composants : " + cc.getConnectedComponentsCount() + " | " +
                     "Diametre : " + Math.round(diameter(g));
             docConsole.insertString(0, InfoSurLeGrapheColision + "\n", null);
 

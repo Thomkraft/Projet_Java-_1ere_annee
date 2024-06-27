@@ -3,6 +3,7 @@ package application;
 import coloration.ColoDSatur;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.MultiGraph;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -85,7 +86,7 @@ public class ChargerGraphe {
                 double degreMoyen = calculerDegreMoyen(nbSommets, nbArretes);
                 graph.addAttribute("degreMoyen", degreMoyen);
                 
-            } catch (IOException | EdgeRejectedException e) {
+            } catch (IOException | EdgeRejectedException | IdAlreadyInUseException e) {
                 String txtErreur = "Erreur : " + e.getMessage();
                 System.err.println(txtErreur);
                 graph.addAttribute("erreurs", txtErreur);

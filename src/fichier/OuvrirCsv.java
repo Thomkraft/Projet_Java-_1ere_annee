@@ -69,8 +69,11 @@ public class OuvrirCsv {
                     Vols vol = new Vols(nomVol, aeroportDepart, aeroportArrivee, heureDepart, minutesDepart, duree, -1);
                     listeVols.add(vol);
                     nbLignes++;
-                } catch (NumberFormatException ex){
+
+                } catch (Exception ex){
+                    System.err.println("Erreur ligne : " + nbLignes);
                     continue;
+
                 }
                 
                 if (nbLignes == 0){

@@ -52,9 +52,9 @@ public class VolPainter {
     }
 
     /**
-     * Retourne un Painter<JXMapViewer> utilisé pour dessiner les trajets de vol sur la carte.
+     * Retourne un PainterJXMapViewer utilisé pour dessiner les trajets de vol sur la carte.
      * @author tom
-     * @return Un Painter<JXMapViewer> pour dessiner les trajets de vol
+     * @return Un PainterJXMapViewer pour dessiner les trajets de vol
      */
     public Painter<JXMapViewer> getPainter() {
         return new Painter<JXMapViewer>() {
