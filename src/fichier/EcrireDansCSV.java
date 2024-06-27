@@ -54,9 +54,9 @@ public class EcrireDansCSV {
         
         int i = 0;
         
-        String NomFichier = "coloration-groupe2.Y";
+        String NomFichier = "coloration-groupe2.7";
         
-        String Valeur = JOptionPane.showInputDialog(fen, "Entrez le nom de votre fichier (coloration-groupe2.Y par defaut) :");
+        String Valeur = JOptionPane.showInputDialog(fen, "Entrez le nom de votre fichier (coloration-groupe2.7 par defaut) :");
         
         if (!Valeur.isEmpty()) {
             NomFichier = Valeur;
